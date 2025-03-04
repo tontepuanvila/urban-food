@@ -1,0 +1,109 @@
+.modify-items-component {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.modify-items-component h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modify-items-component form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modify-items-component label {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.modify-items-component input[type="text"],
+.modify-items-component input[type="number"],
+.modify-items-component textarea,
+.modify-items-component select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.modify-items-component input[type="file"] {
+    margin-top: 5px;
+}
+
+.modify-items-component .image-preview {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.modify-items-component button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: tomato;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.modify-items-component button:hover {
+    background-color: tomato;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .modify-items-component {
+        padding: 15px;
+    }
+
+    .modify-items-component h2 {
+        font-size: 1.5em;
+    }
+
+    .modify-items-component input[type="text"],
+    .modify-items-component input[type="number"],
+    .modify-items-component textarea,
+    .modify-items-component select {
+        padding: 6px;
+    }
+
+    .modify-items-component button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modify-items-component h2 {
+        font-size: 1.2em;
+    }
+
+    .modify-items-component label {
+        font-size: 14px;
+    }
+
+    .modify-items-component input[type="text"],
+    .modify-items-component input[type="number"],
+    .modify-items-component textarea,
+    .modify-items-component select {
+        padding: 4px;
+    }
+
+    .modify-items-component button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
