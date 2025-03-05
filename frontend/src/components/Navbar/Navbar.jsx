@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Link , useNavigate } from 'react-router-dom'
 import { StoreContext } from '../../context/storeContext'
 
-const Navbar = ({setShowLogin}) => {
+const Navbar = () => {
   const {getTotalCartAmount,setMenu,menu,token,setToken}=useContext(StoreContext)
   const navigate=useNavigate()
   const logout = () => {
@@ -32,7 +32,7 @@ const Navbar = ({setShowLogin}) => {
           <div className={getTotalCartAmount()===0?"":"dot"}></div>
 
         </div>
-        {!token?<button className='signbutton'>sign in</button>
+        {!token?<button onClick={()=>navigate('/login')} className='signbutton'>sign in</button>
             :<div className='navbar-profile'>
               <img src={assets.profile_icon} className='white-filter' alt="" />
               <ul className="nav-profile-dropdown">

@@ -12,21 +12,17 @@ const StoreContextProvider = (props) => {
 
     const url="http://localhost:5000"
 
-    useEffect(()=>{
-        async function loadData() {
-            await fetchMenuItems();
-            if (localStorage.getItem("token")) {
-                setToken(localStorage.getItem("token"));
-            }
-        }
-        loadData();
-    },[])
+   
 
     const fetchMenuItems = async () => {
-        const response = await axios.get(url+"/api/menu/listMenu");
-        setMenuItems(response.data.data)
-    }
-
+        try {
+            const response = await axios.get(url + "/api/menu/listMenu");
+            console.log("Fetched data:", response.data.data);
+            setMenuItems(response.data.data);
+        } catch (error) {
+            console.error("Error fetching menu items:", error);
+        }
+    };
 
 
     const addToCart = async (itemId) => {
@@ -36,12 +32,32 @@ const StoreContextProvider = (props) => {
         else {
             setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }))
         }
+        if (token){
+            await axios.post(url+"/api/cart/addToCart",{itemId},{headers:{token}})
+        }
     }
 
     const removeFromCart = async (itemId) => {
         setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }))
+        if (token) {
+            await axios.post(url+"/api/cart/removeFromCart",{itemId},{headers:{token}})
+        }
 
     }
+
+    const loadCartData = async (token) => {
+        try {
+            const response = await axios.post(url + "/api/cart/getCartItems", {}, { headers: { token } });
+            const cartData = response.data.data
+            console.log("Fetched cart data:", cartData);
+            setCartItems(cartData);
+            // Log the cartItems state after it has been set
+            console.log("Updated cartItems:", response.data.data);
+        } catch (error) {
+            console.error("Error loading cart data:", error);
+        }
+    };
+    
 
     const getTotalCartAmount = () => {
         let totalAmount = 0;
@@ -53,6 +69,17 @@ const StoreContextProvider = (props) => {
         }
         return totalAmount;
     }
+
+    useEffect(()=>{
+        async function loadData() {
+            await fetchMenuItems();
+            if (localStorage.getItem("token")) {
+                setToken(localStorage.getItem("token"));
+                await loadCartData(localStorage.getItem("token"));
+            }
+        }
+        loadData();
+    },[])
 
 
 

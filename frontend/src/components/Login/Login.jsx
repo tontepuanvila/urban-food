@@ -38,7 +38,7 @@ const Login = () => {
       navigate("/")
     }
     else{
-      alert(res.data.message)
+      alert(response.data.message)
     }
 
   }

@@ -27,6 +27,7 @@ const addMenu = async (req,res) => {
 const listMenu= async (req,res) => {
     try {
         const menu = await menuModel.find({});
+        console.log(menu)
         res.json({success:true,data:menu})
     } catch (error) {
         console.log(error);

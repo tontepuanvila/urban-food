@@ -20,8 +20,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'manager', 'user'],
         default: 'user'
-    }
-});
+    },
+    cartData:{type:Object,default:{}}
+
+},{minimize:false});
 
 const userModel = mongoose.models.User||mongoose.model('User', userSchema);
 
