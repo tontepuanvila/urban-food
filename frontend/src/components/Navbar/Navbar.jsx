@@ -2,21 +2,28 @@ import React, { useContext } from 'react'
 import './Navbar.css'
 import {assets} from '../../assets/assets'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link , useNavigate } from 'react-router-dom'
 import { StoreContext } from '../../context/storeContext'
 
 const Navbar = ({setShowLogin}) => {
-  const [menu,setMenu] = useState("home")
-  const {getTotalCartAmount}=useContext(StoreContext)
+  const {getTotalCartAmount,setMenu,menu,token,setToken}=useContext(StoreContext)
+  const navigate=useNavigate()
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    navigate("/")
+  }
+
 
 
   return (
     <div className='navbar img-position-change'>
       <Link to='/' onClick={()=>setMenu("home")}><img src={assets.logo} alt="" className='logo img-style-change'/></Link>
       <ul className='navbar-menu'>
-        <Link to='/' onClick={()=>setMenu("home")} className={menu==="home"?"active":""}>home</Link>
-        <a href='#explore-menu' onClick={()=>setMenu("menu")} className={menu==="menu"?"active":""}>menu</a>
-        <a href='#footer' onClick={()=>setMenu("contact-us")} className={menu==="contact-us"?"active":""}>contact us</a>
+        <Link to='/' onClick={()=>setMenu("home")} className={menu==="home"?"active":""}>Home</Link>
+        <Link to='/menu' onClick={()=>setMenu("menu")} className={menu==="menu"?"active":""}>Menu</Link>
+        <Link to='/dashboard' onClick={()=>setMenu("dashboard")} className={menu==="dashboard"?"active":""}>Dashboard</Link>
+        <a href='#footer' onClick={()=>setMenu("contact-us")} className={menu==="contact-us"?"active":""}>Contact Us</a>
       </ul>
       <div className="navbar-right">
         <img src={assets.search_icon} alt="" className="" />
@@ -25,7 +32,15 @@ const Navbar = ({setShowLogin}) => {
           <div className={getTotalCartAmount()===0?"":"dot"}></div>
 
         </div>
-        <button onClick={()=>setShowLogin(true)}>Sign in</button>
+        {!token?<button className='signbutton'>sign in</button>
+            :<div className='navbar-profile'>
+              <img src={assets.profile_icon} className='white-filter' alt="" />
+              <ul className="nav-profile-dropdown">
+                <li onClick={()=>navigate('/myorders')}><img src={assets.bag_icon} alt="" /><p>Orders</p></li>
+                <hr />
+                <li onClick={logout}><img src={assets.logout_icon} alt="" /><p>Logout</p></li>
+              </ul>
+              </div>}
       </div>
 
     </div>
