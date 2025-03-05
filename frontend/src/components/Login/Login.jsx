@@ -4,10 +4,12 @@ import { assets } from '../../assets/assets';
 import { StoreContext } from '../../context/storeContext';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
   const [currState, setCurrState] = useState("Login");
   const {url,setToken} = useContext(StoreContext)
+  const {login}=useAuth()
   const navigate=useNavigate()
   const [data,setData] = useState({
     name:"",
@@ -35,6 +37,8 @@ const Login = () => {
     if (response.data.success){
       setToken(response.data.token);
       localStorage.setItem("token",response.data.token)
+      localStorage.setItem("role",response.data.role)
+      login(response.data)
       navigate("/")
     }
     else{
