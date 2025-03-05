@@ -5,7 +5,7 @@ import { StoreContext } from '../../context/storeContext'
 import { useNavigate } from 'react-router-dom'
 
 const PlaceOrder = () => {
-    const {getTotalCartAmount,food_list,cartItems} = useContext(StoreContext)
+    const {getTotalCartAmount,menuItems,cartItems} = useContext(StoreContext)
     const [data,setData] = useState({
         firstName:"",
         lastName:"",
