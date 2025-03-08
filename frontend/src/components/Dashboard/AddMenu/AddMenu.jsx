@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,6 +29,7 @@ const AddMenu = ({ url, fetchMenuItems }) => {
         category: 'Salad',
         availability: 'In Stock'
     });
+
 
     /**
      * Handles changes to text inputs and select elements.

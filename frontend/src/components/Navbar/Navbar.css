@@ -105,6 +105,12 @@
     color: tomato;
 }
 
+.navbar-menu a.active {
+    color: #ff6f61; /* Change to the color you want for the active link */
+    font-weight: bold;
+  }
+  
+
 @media (max-width:1050px) {
     .navbar .logo{
         width: 140px;

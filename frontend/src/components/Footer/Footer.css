@@ -43,21 +43,11 @@
   object-fit: contain;
 }
 
-:root .footer {
-    background-color: #252323;
-}
-
-.lightcolors .footer {
-    background-color: #323232;
-}
-
-:root .logofooter {
-    filter: var(--logos-filter); 
-}
-
-.lightcolors .logofooter {
-    filter: none; 
-}
+.footer-content-center ul li a:hover {
+    color: #ff6f61; /* Highlight color on hover */
+    transform: translateX(5px); /* Optional: Adding a small slide effect */
+  }
+  
 
 
 @media (max-width:806px) {

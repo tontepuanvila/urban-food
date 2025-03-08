@@ -88,6 +88,7 @@
  Button Styling
  ============================ */
 .add button {
+  width:100%;
   padding: 12px 20px;
   border: none;
   border-radius: 4px;

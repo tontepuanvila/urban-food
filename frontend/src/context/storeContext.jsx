@@ -7,7 +7,6 @@ export const StoreContext = createContext(null)
 
 const StoreContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
-    const [menu, setMenu] = useState('home');
     const [token,setToken]=useState("")
     const [menuItems,setMenuItems] = useState([])
     const {login}=useAuth()
@@ -59,14 +58,22 @@ const StoreContextProvider = (props) => {
 
     const getTotalCartAmount = () => {
         let totalAmount = 0;
+        
+        // Iterate over the cart items
         for (const item in cartItems) {
             if (cartItems[item] > 0) {
-                let itemInfo = menuItems.find((product) => product._id === item)
-                totalAmount += itemInfo.price * cartItems[item];
+                // Find the corresponding item in the menuItems
+                let itemInfo = menuItems.find((product) => product._id.toString() === item.toString());
+                
+                // If itemInfo is found and has a valid price
+                if (itemInfo && itemInfo.price) {
+                    totalAmount += parseFloat(itemInfo.price) * cartItems[item];
+                }
             }
         }
         return totalAmount;
     }
+    
 
     useEffect(()=>{
         async function loadData() {
@@ -83,7 +90,7 @@ const StoreContextProvider = (props) => {
 
 
     const contextValue = {
-        menuItems, addToCart, removeFromCart, cartItems, getTotalCartAmount, setMenu,menu,url,token,setToken,fetchMenuItems
+        menuItems, addToCart, removeFromCart, cartItems, getTotalCartAmount,url,token,setToken,fetchMenuItems
     }
 
     return (
