@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AddMenu.css';
 import { assets } from '../../../assets/assets';
@@ -233,7 +233,6 @@ const AddMenu = ({ url, fetchMenuItems }) => {
                 {/* Submit Button */}
                 <button type="submit" className="add-btn">ADD</button>
             </form>
-            <ToastContainer />
         </div>
     );
 };

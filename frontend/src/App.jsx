@@ -1,6 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Navbar from './components/Navbar/Navbar'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import Home from './pages/Home/Home'
 import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
 import Cart from './pages/Cart/Cart'
@@ -17,15 +17,23 @@ import MyOrders from './pages/MyOrders/MyOrders'
 import UnauthorizedPage from './pages/Unauthorized/UnauthorizedPage'
 import VerifyOrder from './pages/verifyOrder/verifyOrder'
 import { StoreContext } from './context/storeContext'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 
 const App = () => {
 
   const {url,fetchMenuItems}=useContext(StoreContext)
+  const navigate=useNavigate()
+
+  useEffect(()=>{
+    navigate('/')
+  },[])
 
   return (
     <>
       <div className='app'>
+        <ToastContainer/>
         <Navbar/>
         <Routes>
           <Route path='/' element={<Home />} />
