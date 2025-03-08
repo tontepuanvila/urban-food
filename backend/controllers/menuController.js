@@ -1,5 +1,8 @@
 import menuModel from "../models/menuModel.js";
 import fs from 'fs'
+import mongoose from "mongoose";
+import multer from "multer";
+import path from "path";
 
 //add menu item
 
@@ -27,7 +30,6 @@ const addMenu = async (req,res) => {
 const listMenu= async (req,res) => {
     try {
         const menu = await menuModel.find({});
-        console.log(menu)
         res.json({success:true,data:menu})
     } catch (error) {
         console.log(error);
@@ -35,31 +37,61 @@ const listMenu= async (req,res) => {
     }
 }
 
-const updateMenu= async (req,res)=>{
-    const {id}=req.params
-    const updateFields=req.body
-    console.log(updateFields)
-     try {
-         const updatedMenu=await menuModel.findByIdAndUpdate(id,updateFields,{new:true});
-         console.log(updatedMenu)
-         if (updatedMenu) {
-            res.json({success:true,message: 'Menu updated successfully'});
-        } else {
-            res.json({success:false, message: 'Menu not found' });
+
+// Set up multer for image storage (you can change the storage destination and filename format)
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Specify the folder to save files
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        cb(null, Date.now() + ext); // Generate unique filename with extension
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Update menu function
+const updateMenu = async (req, res) => {
+    const { id } = req.params;
+
+    // Handle file upload (this will parse the uploaded file in 'image' field)
+    upload.single('image')(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ success: false, message: 'File upload failed' });
         }
-     } catch (error) {
-        res.json({success:false, message: error.message });
-     }
-}
+
+        // Now that file is uploaded, we can access it in req.file, and other fields in req.body
+        const updateFields = { ...req.body }; // Data from the form fields (name, description, etc.)
+
+        // If the file was uploaded, include it in the updateFields
+        if (req.file) {
+            updateFields.image = req.file.filename; // Store only the filename in the database (not the file itself)
+        }
+
+        try {
+            const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
+
+            if (updatedMenu) {
+                res.json({ success: true, message: 'Menu updated successfully' });
+            } else {
+                res.json({ success: false, message: 'Menu not found' });
+            }
+        } catch (error) {
+            res.json({ success: false, message: error.message });
+        }
+    });
+};
+
 
 // remove food item
 const removeMenu = async (req,res) => {
     try {
-        const menu = await menuModel.findById(req.params);
+        const menu = await menuModel.findById(new mongoose.Types.ObjectId(req.params));
         console.log(menu)
         fs.unlink(`uploads/${menu.image}`,()=>{})
 
-        await menuModel.findByIdAndDelete(req.body.id);
+        await menuModel.findByIdAndDelete(new mongoose.Types.ObjectId(req.params));
         res.json({success:true,message:"Menu Item Removed"})
     } catch (error) {
         console.log(error);

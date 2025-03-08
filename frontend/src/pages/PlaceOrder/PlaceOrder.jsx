@@ -1,11 +1,12 @@
 import React,{useState} from 'react'
 import './PlaceOrder.css'
-import { useContext } from 'react'
+import { useContext ,useEffect} from 'react'
 import { StoreContext } from '../../context/storeContext'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const PlaceOrder = () => {
-    const {getTotalCartAmount,menuItems,cartItems} = useContext(StoreContext)
+    const {getTotalCartAmount,menuItems,cartItems,token} = useContext(StoreContext)
     const [data,setData] = useState({
         firstName:"",
         lastName:"",
@@ -18,10 +19,63 @@ const PlaceOrder = () => {
         phone:""
       })
 
-    const onChangeHandler=()=>{}
+      const onChangeHandler = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setData(data=>({...data,[name]:value}))
+      }
+    
+      const placeOrder = async (event) => {
+        event.preventDefault();
+        let orderItems = [];
+    
+        menuItems.forEach((item) => {
+          if (cartItems[item._id] > 0) {
+            orderItems.push({
+              menuItemId: item._id,
+              quantity: cartItems[item._id],
+              price: item.price
+            });
+          }
+        });
+    
+        const amount = getTotalCartAmount()
+    
+        const orderData = {
+          items: orderItems,
+          amount,
+        };
+    
+        try {
+          const response = await axios.post('http://localhost:5000/api/order/placeOrder', orderData, { headers: { token } });
+    
+          if (response.data.success) {
+            const { redirect_url } = response.data;
+            window.location.replace(redirect_url);
+          } else {
+            alert("Error");
+          }
+        } catch (error) {
+          console.error('Error placing order:', error);
+          alert("Error");
+        }
+      };
+    
+      const navigate = useNavigate();
+    
+    
+      useEffect(()=>{
+        if (!token){
+          navigate('/cart')
+        }
+        else if(getTotalCartAmount()===0)
+        {
+          navigate('/cart')
+        }
+      },[token])
 
   return (
-    <form className='place-order'>
+    <form onSubmit={placeOrder} className='place-order'>
       <div className="place-order-left">
       <p className="title">Delivery Information</p>
       <div className="multi-fields">

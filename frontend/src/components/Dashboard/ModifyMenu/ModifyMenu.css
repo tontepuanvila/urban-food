@@ -1,109 +1,195 @@
-.modify-items-component {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+/*
+========================================
+   Modify Menu - CSS Styles
+   Description: Styles for the Modify Menu component,
+   including layout, responsiveness, and animations.
+========================================
+*/
+
+/* General container for modify menu */
+.modify-menu {
+    max-width: 100%;
+    margin: auto;
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: #f8f8f8;
+    border-radius: 15px;
+    box-shadow: 0px 0px 10px #00000015;
+    transition: 0.3s;
+    animation: fadeIn 1s;
+
+    /* Enables scrolling when content exceeds max height */
+    max-height: 600px;
+    overflow-y: auto;
 }
 
-.modify-items-component h2 {
+/* Header styling */
+.modify-menu h2 {
     text-align: center;
     margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
 }
 
-.modify-items-component form {
+/* Flex container for the menu items, displaying 2 items per row */
+.menu-list {
     display: flex;
-    flex-direction: column;
-}
-
-.modify-items-component label {
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-.modify-items-component input[type="text"],
-.modify-items-component input[type="number"],
-.modify-items-component textarea,
-.modify-items-component select {
+    flex-wrap: wrap;
+    gap: 10px; /* Reduced the gap between items */
+    justify-content: space-between;
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding-bottom: 10px;
 }
 
-.modify-items-component input[type="file"] {
-    margin-top: 5px;
+/* Styling for each menu item */
+.menu-item {
+    width: 48%; /* Ensures two items per row */
+    border-radius: 15px;
+    box-shadow: 0px 0px 10px #00000015;
+    transition: 0.3s ease;
+    background-color: white;
+    overflow: hidden;
 }
 
-.modify-items-component .image-preview {
-    display: block;
+/* Hover effect on menu items */
+.menu-item:hover {
+    transform: translateY(-10px);
+}
+
+/* Styling for the image */
+.menu-item img {
     width: 100%;
-    max-width: 300px;
+    height: 200px;
+    object-fit: cover; /* Ensures image fills space while maintaining aspect ratio */
+    border-radius: 15px 15px 0px 0px;
+}
+
+/* Info section for each menu item (name, description, price) */
+.menu-item-info {
+    padding: 15px;
+}
+
+/* Menu item name and rating container */
+.menu-item-name-rating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.menu-item-name-rating p {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+/* Description text styling */
+.menu-item-desc {
+    color: #676767;
+    font-size: 12px;
+}
+
+/* Price styling */
+.menu-item-price {
+    color: tomato;
+    font-size: 22px;
+    font-weight: 500;
+    margin: 10px 0px;
+}
+
+/* Buttons section (Edit and Delete) */
+.buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
     margin-top: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.modify-items-component button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    background-color: tomato;
-    color: #fff;
-    font-size: 16px;
+/* Common button styling */
+.buttons .edit-button,
+.buttons .delete-button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+    transition: background-color 0.3s ease;
     cursor: pointer;
-    margin-top: 20px;
+    width: 48%; /* Ensures buttons take up equal space */
 }
 
-.modify-items-component button:hover {
+/* Edit button styles */
+.buttons .edit-button {
     background-color: tomato;
+    color: white;
+    text-decoration: none;
 }
 
-/* Media Queries for Responsiveness */
+.buttons .edit-button:hover {
+    background-color: #ff6347;
+}
+
+/* Delete button styles */
+.buttons .delete-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+}
+
+.buttons .delete-button:hover {
+    background-color: #e60000;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .modify-items-component {
-        padding: 15px;
+    .menu-item {
+        width: 100%; /* Stack items vertically on smaller screens */
     }
 
-    .modify-items-component h2 {
-        font-size: 1.5em;
+    .menu-item img {
+        height: 150px;
     }
 
-    .modify-items-component input[type="text"],
-    .modify-items-component input[type="number"],
-    .modify-items-component textarea,
-    .modify-items-component select {
-        padding: 6px;
+    .menu-item-name-rating p {
+        font-size: 1.2rem;
     }
 
-    .modify-items-component button {
-        padding: 8px 12px;
-        font-size: 14px;
+    .menu-item-price {
+        font-size: 18px;
+    }
+
+    .buttons .edit-button,
+    .buttons .delete-button {
+        font-size: 1rem;
+        padding: 8px 16px;
     }
 }
 
+/* For mobile screens */
 @media (max-width: 480px) {
-    .modify-items-component h2 {
-        font-size: 1.2em;
+    .menu-item {
+        width: 100%; /* Stack items vertically on very small screens */
     }
 
-    .modify-items-component label {
-        font-size: 14px;
+    .menu-item img {
+        height: 100px; /* Reduce image size for mobile */
     }
 
-    .modify-items-component input[type="text"],
-    .modify-items-component input[type="number"],
-    .modify-items-component textarea,
-    .modify-items-component select {
-        padding: 4px;
+    .menu-item-name-rating p {
+        font-size: 1rem;
     }
 
-    .modify-items-component button {
-        padding: 6px 10px;
-        font-size: 12px;
+    .menu-item-price {
+        font-size: 16px;
     }
+
+    .buttons .edit-button,
+    .buttons .delete-button {
+        font-size: 1rem;
+        padding: 6px 12px;
+    }
+}
+
+/* Specific styles for smooth appearance */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }

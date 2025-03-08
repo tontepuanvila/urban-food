@@ -1,26 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Dashboard.css';
-import Orders from './Orders/Orders';
-import ModifyMenu from './ModifyMenu/ModifyMenu';
-
+import { Link,Outlet } from 'react-router-dom';
 const Dashboard = () => {
-    const [activeComponent, setActiveComponent] = useState(null);
-
-    const handleMenuClick = (component) => {
-        setActiveComponent(component);
-    };
-
     return (
         <div className="dashboard-container">
             <div className="sidebar">
                 <ul>
-                    <li><a href="#modify-items" onClick={() => handleMenuClick('modify-items')}>Modify Items</a></li>
-                    <li><a href="#orders" onClick={() => handleMenuClick('orders')}>Orders</a></li>
+                    <li><Link to="/dashboard">Add Menu</Link></li>
+                    <li><Link to="/dashboard/updateMenu">Edit Menu</Link></li>
+                    <li><Link to="/dashboard/orders">Orders</Link></li>
                 </ul>
             </div>
             <div className="main-content">
-                {activeComponent === 'modify-items' && <ModifyMenu />}
-                {activeComponent === 'orders' && <Orders />}
+                <Outlet /> {/* This will render the nested route components */}
             </div>
         </div>
     );

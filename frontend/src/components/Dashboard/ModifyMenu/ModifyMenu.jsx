@@ -1,84 +1,93 @@
-import React, { useState } from 'react';
-import './ModifyMenu.css';
+/**
+ * ModifyMenu Component
+ * 
+ * This component displays a list of menu items and allows users to modify or delete them.
+ * It fetches menu items from the server and enables deletion with real-time updates.
+ * 
+ * Features:
+ * - Displays menu items with their details.
+ * - Provides an "Edit" button to update a menu item.
+ * - Allows users to delete a menu item with a confirmation message.
+ * - Uses context to manage menu data.
+ * - Uses `axios` for API calls and `react-toastify` for notifications.
+ */
 
-const ModifyMenu = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        price: '',
-        description: '',
-        category: '',
-        availability: '',
-        image: ''
-    });
-    const [preview, setPreview] = useState('');
+import React, { useContext, useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import "./ModifyMenu.css";
+import { StoreContext } from "../../../context/storeContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
+const ModifyMenu = ({ url, fetchMenuItems }) => {
+  // Accessing menuItems from the context
+  const { menuItems } = useContext(StoreContext);
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFormData({
-                ...formData,
-                image: file
-            });
+  /**
+   * Handles deletion of a menu item.
+   * Sends a DELETE request to the backend and updates the menu list.
+   * @param {string} id - The ID of the menu item to be deleted.
+   */
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`${url}/api/menu/removeMenu/${id}`);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        fetchMenuItems(); // Refresh the menu list after successful deletion
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to delete item. Please try again.");
+    }
+  };
 
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+  /**
+   * Fetch menu items when the component mounts.
+   */
+  useEffect(() => {
+    fetchMenuItems();
+  }, []);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle form submission
-        console.log(formData);
-    };
+  return (
+    <div className="modify-menu">
+      <h2>Edit Menu</h2>
 
-    return (
-        <div className="modify-items-component">
-            <h2>Modify Item</h2>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Name:
-                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
-                </label>
-                <label>
-                    Price:
-                    <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
-                </label>
-                <label>
-                    Description:
-                    <textarea name="description" value={formData.description} onChange={handleInputChange} required />
-                </label>
-                <label>
-                    Category:
-                    <input type="text" name="category" value={formData.category} onChange={handleInputChange} required />
-                </label>
-                <label>
-                    Availability:
-                    <select name="availability" value={formData.availability} onChange={handleInputChange} required>
-                        <option value="">Select</option>
-                        <option value="In Stock">In Stock</option>
-                        <option value="Out of Stock">Out of Stock</option>
-                    </select>
-                </label>
-                <label>
-                    Image:
-                    <input type="file" accept="image/*" onChange={handleImageChange} />
-                    {preview && <img src={preview} alt="Preview" className="image-preview" />}
-                </label>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-    );
+      {/* Menu List */}
+      <div className="menu-list">
+        {menuItems.map((item) => (
+          <div key={item._id} className="menu-item">
+            {/* Item Image */}
+            <img src={`${url}/images/${item.image}`} alt={item.name} />
+
+            {/* Item Details */}
+            <div className="menu-item-info">
+              <p>{item.name}</p>
+              <p className="menu-item-desc">{item.description}</p>
+              <p className="menu-item-price">Rs.{item.price}</p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="buttons">
+              {/* Edit Button - Navigates to the Edit Page */}
+              <NavLink
+                to={`/dashboard/editItem/${item._id}`}
+                state={{ itemData: item }}
+                className="edit-button"
+              >
+                Edit
+              </NavLink>
+
+              {/* Delete Button - Deletes the Menu Item */}
+              <button onClick={() => handleDelete(item._id)} className="delete-button">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default ModifyMenu;

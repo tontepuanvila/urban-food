@@ -1,0 +1,182 @@
+/* ============================
+   General Styles
+   ============================ */
+
+/* Container for the add menu form */
+.add {
+  width: 100%;
+  max-width: 600px; /* Restricts form width */
+  margin: 20px auto; /* Centers the form */
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fafafa;
+}
+
+/* Header styles */
+.add h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Form Layout */
+.add form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Ensures consistent spacing between fields */
+}
+
+/* Labels for inputs */
+.add label {
+  font-weight: 600;
+  color: #555;
+}
+
+/* Styles for input fields, dropdowns, textareas, and file upload */
+.add input[type="text"],
+.add input[type="number"],
+.add textarea,
+.add select,
+.add input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 16px;
+  color: #333;
+  box-sizing: border-box; /* Ensures padding is included in the total width */
+}
+
+/* Allow vertical resizing for textareas */
+.add textarea {
+  resize: vertical;
+  height: auto;
+}
+
+/* ============================
+ Category and Price Section
+ ============================ */
+.add .add-category-price {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px; /* Ensures consistent spacing between category and price */
+}
+
+/* Ensures category and price fields take equal width */
+.add .add-category-price > div {
+  flex: 1;
+}
+
+/* ============================
+ Image Preview
+ ============================ */
+.add .image-preview {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================
+ Button Styling
+ ============================ */
+.add button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ff6347;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.add button:hover {
+  background-color: #ff4500;
+}
+
+/* Active (clicked) state */
+.add button:active {
+  background-color: #cc3700;
+}
+
+/* ============================
+ Responsive Design
+ ============================ */
+@media (max-width: 768px) {
+  .add {
+      padding: 15px;
+  }
+
+  .add h2 {
+      font-size: 22px;
+  }
+
+  .add input[type="text"],
+  .add input[type="number"],
+  .add textarea,
+  .add select,
+  .add input[type="file"] {
+      font-size: 14px;
+  }
+
+  .add button {
+      font-size: 16px;
+      padding: 10px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add {
+      padding: 10px;
+  }
+
+  .add h2 {
+      font-size: 20px;
+  }
+
+  .add label {
+      font-size: 14px;
+  }
+
+  .add input[type="text"],
+  .add input[type="number"],
+  .add textarea,
+  .add select,
+  .add input[type="file"] {
+      font-size: 12px;
+  }
+
+  .add button {
+      font-size: 14px;
+      padding: 10px 12px;
+  }
+
+  /* Adjusts category and price layout for smaller screens */
+  .add .add-category-price {
+      flex-direction: column;
+      gap: 15px;
+  }
+}
+
+/* ============================
+ Specific Styles for Image Upload
+ ============================ */
+.add-img-upload {
+  margin-bottom: 15px;
+}
+
+.add-img-upload label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+}

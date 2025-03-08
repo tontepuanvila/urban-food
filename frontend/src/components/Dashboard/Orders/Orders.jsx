@@ -1,64 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import axios from 'axios';
 import './Orders.css';
 
-const Orders = () => {
-    const [orders, setOrders] = useState([
-        { id: 1, name: 'John Doe', price: '$25.00', description: '2x Pizza', category: 'Food', availability: 'Delivered', status: 'Pending' },
-        { id: 2, name: 'Jane Smith', price: '$15.00', description: '1x Burger', category: 'Food', availability: 'Delivered', status: 'Processing' },
-    ]);
+const Orders = ({ url }) => {
+  const [orders, setOrders] = useState([]);
 
-    const [statusOptions] = useState(['Pending', 'Processing', 'Delivered', 'Cancelled']);
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-    const handleStatusChange = (id, newStatus) => {
-        setOrders((prevOrders) => 
-            prevOrders.map((order) => 
-                order.id === id ? { ...order, status: newStatus } : order
-            )
-        );
-    };
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(`${url}/api/order/listOrders`);
+      if (response.data.success) {
+        setOrders(response.data.data);
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  };
 
-    return (
-        <div className="order-container">
-            <h2>Order Details</h2>
-            <div className="table-responsive">
-                <table className="order-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Availability</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {orders.map((order) => (
-                            <tr key={order.id}>
-                                <td>{order.id}</td>
-                                <td>{order.name}</td>
-                                <td>{order.price}</td>
-                                <td>{order.description}</td>
-                                <td>{order.category}</td>
-                                <td>{order.availability}</td>
-                                <td>
-                                    <select
-                                        value={order.status}
-                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                    >
-                                        {statusOptions.map((status) => (
-                                            <option key={status} value={status}>{status}</option>
-                                        ))}
-                                    </select>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await axios.put(`${url}/api/order/updateStatus/${orderId}`, { status: newStatus });
+      if (response.data.success) {
+        fetchOrders(); // Refresh orders after status update
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
+
+  return (
+<div className="orders-container">
+      <h2>Orders</h2>
+      <div className="orders-list">
+        {orders.map((order) => (
+          <div className="order-item" key={order._id}>
+            <div className="order-details">
+              <p><strong>Order ID:</strong> {order._id}</p>
+              <p><strong>Total Amount:</strong> ${order.totalAmount}</p>
+              <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+              <p><strong>Payment Status:</strong> {order.payment ? 'Paid' : 'Pending'}</p>
+              <div className="order-items">
+                <p><strong>Items:</strong></p>
+                <ul>
+                  {order.items.map((item) => (
+                    <li key={item.menuItemId} className="item-details">
+                      <div className="item-field"><strong>Item Name:</strong> {item.menuItemId.name}</div> {/* Replace with actual item name */}
+                      <div className="item-field"><strong>Quantity:</strong> {item.quantity}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-        </div>
-    );
+            <div className="order-status">
+              <label htmlFor={`status-${order._id}`}>Delivery Status:</label>
+              <select id={`status-${order._id}`} value={order.status} onChange={(e) => handleStatusChange(order._id, e.target.value)}>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Orders;

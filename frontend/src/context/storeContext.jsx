@@ -83,7 +83,7 @@ const StoreContextProvider = (props) => {
 
 
     const contextValue = {
-        menuItems, addToCart, removeFromCart, cartItems, getTotalCartAmount, setMenu,menu,url,token,setToken,
+        menuItems, addToCart, removeFromCart, cartItems, getTotalCartAmount, setMenu,menu,url,token,setToken,fetchMenuItems
     }
 
     return (
