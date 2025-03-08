@@ -18,6 +18,7 @@ import "./ModifyMenu.css";
 import { StoreContext } from "../../../context/storeContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../context/AuthContext";
 
 const ModifyMenu = ({ url, fetchMenuItems }) => {
   // Accessing menuItems from the context
@@ -41,6 +42,8 @@ const ModifyMenu = ({ url, fetchMenuItems }) => {
       toast.error("Failed to delete item. Please try again.");
     }
   };
+
+  const {user}=useAuth()
 
   /**
    * Fetch menu items when the component mounts.
@@ -79,9 +82,9 @@ const ModifyMenu = ({ url, fetchMenuItems }) => {
               </NavLink>
 
               {/* Delete Button - Deletes the Menu Item */}
-              <button onClick={() => handleDelete(item._id)} className="delete-button">
+             {user.role==='admin' && <button onClick={() => handleDelete(item._id)} className="delete-button">
                 Delete
-              </button>
+              </button>}
             </div>
           </div>
         ))}
