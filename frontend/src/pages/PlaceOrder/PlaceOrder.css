@@ -1,20 +1,32 @@
-.place-order{
+/* General Styles */
+.place-order {
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 50px;
     margin-top: 100px;
+    flex-wrap: nowrap; /* Ensures side-by-side layout on large screens */
 }
-.place-order-left{
+
+.place-order-left {
     width: 100%;
-    max-width: max(30%, 500px);
+    max-width: 500px;
 }
-.place-order-left .title{
+
+.place-order-right {
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto; /* Keeps it aligned to the right */
+}
+
+.place-order-left .title {
     font-size: 30px;
     font-weight: 600;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
 }
-.place-order-left input{
+
+.place-order-left input,
+.place-order-left .multi-fields input {
     margin-bottom: 15px;
     width: 100%;
     padding: 10px;
@@ -22,14 +34,58 @@
     border-radius: 4px;
     outline-color: tomato;
 }
-.place-order-left .multi-fields{
+
+.place-order-left .multi-fields {
     display: flex;
     gap: 10px;
 }
-.place-order-right{
-    width: 100%;
-    max-width: max(40%, 500px);
-}
-.place-order .cart-total button{
+
+.cart-total button {
     margin-top: 30px;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: tomato;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cart-total button:hover {
+    background-color: #e44d26;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .place-order {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    .place-order-left, .place-order-right {
+        max-width: 100%;
+        margin-left: 0; /* Resets margin on smaller screens */
+    }
+    .place-order-left .multi-fields {
+        flex-direction: column;
+        gap: 5px;
+    }
+    .place-order-right {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .place-order {
+        margin-top: 50px;
+        padding: 0 20px;
+    }
+    .place-order-left .title {
+        font-size: 24px;
+    }
+    .cart-total button {
+        font-size: 14px;
+        padding: 10px;
+    }
 }
