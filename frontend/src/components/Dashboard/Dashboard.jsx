@@ -14,7 +14,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       <div className="sidebar">
         <ul>
-          {user.role === 'admin' && <li><Link to="/dashboard/addMenu">Add Menu</Link></li>}
+          {user?.role === 'admin' && <li><Link to="/dashboard/addMenu">Add Menu</Link></li>}
           <li><Link to="/dashboard/updateMenu">Edit Menu</Link></li>
           <li><Link to="/dashboard/orders">Orders</Link></li>
         </ul>

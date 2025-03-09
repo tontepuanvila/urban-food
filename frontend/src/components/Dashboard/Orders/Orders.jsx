@@ -15,10 +15,10 @@ const Orders = ({ url }) => {
       if (response.data.success) {
         setOrders(response.data.data);
       } else {
-        console.error(response.data.message);
+        toast.error("Unable to fetch the Orders.")
       }
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      toast.error("Unable to fetch the Orders.")
     }
   };
 
@@ -27,11 +27,12 @@ const Orders = ({ url }) => {
       const response = await axios.put(`${url}/api/order/updateStatus/${orderId}`, { status: newStatus });
       if (response.data.success) {
         fetchOrders(); // Refresh orders after status update
+        toast.success(response.data.message);
       } else {
-        console.error(response.data.message);
+        toast.error('Unable to update the order status');
       }
     } catch (error) {
-      console.error('Error updating order status:', error);
+      toast.error('Unable to update the order status');
     }
   };
 
@@ -45,12 +46,11 @@ const Orders = ({ url }) => {
               <p><strong>Order ID:</strong> {order._id}</p>
               <p><strong>Total Amount:</strong> ${order.totalAmount}</p>
               <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-              <p><strong>Payment Status:</strong> {order.payment ? 'Paid' : 'Pending'}</p>
               <div className="order-items">
                 <p><strong>Items:</strong></p>
                 <ul>
                   {order.items.map((item) => (
-                    <li key={item.menuItemId} className="item-details">
+                    <li key={`${order._id}-${item.menuItemId._id}`}  className="item-details">
                       <div className="item-field"><strong>Item Name:</strong> {item.menuItemId.name}</div> {/* Replace with actual item name */}
                       <div className="item-field"><strong>Quantity:</strong> {item.quantity}</div>
                     </li>

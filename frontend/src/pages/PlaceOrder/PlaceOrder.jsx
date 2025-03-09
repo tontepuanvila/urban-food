@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 const PlaceOrder = () => {
-  const { getTotalCartAmount, menuItems, cartItems, token } = useContext(StoreContext);
+  const { getTotalCartAmount, menuItems, cartItems, token, url ,setCartItems} = useContext(StoreContext);
   const [data, setData] = useState({
     firstName: '',
     lastName: '',
@@ -35,7 +35,6 @@ const PlaceOrder = () => {
   };
 
   const validateForm = () => {
-    console.log("entered")
 
     if (!data.firstName) {
       toast.error('First Name is required');
@@ -45,9 +44,7 @@ const PlaceOrder = () => {
       toast.error('Last Name is required');
       return false;
     }
-    console.log(data.email)
     if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-      console.log("test")
       toast.error('Please enter a valid email address');
       return false
     }
@@ -71,12 +68,11 @@ const PlaceOrder = () => {
       toast.error('Country is required');
       return false;
     }
-    console.log(data.phone)
     if (!data.phone || !/^\d{10}$/.test(data.phone)) {
-      console.log("test")
       toast.error('Please enter a valid phone number');
       return false;
     }
+    return true;
   };
 
   const placeOrder = async (event) => {
@@ -88,12 +84,12 @@ const PlaceOrder = () => {
 
     let orderItems = [];
 
+    // Get the order items from the cart
     menuItems.forEach((item) => {
       if (cartItems[item._id] > 0) {
         orderItems.push({
           menuItemId: item._id,
           quantity: cartItems[item._id],
-          price: item.price,
         });
       }
     });
@@ -102,25 +98,25 @@ const PlaceOrder = () => {
 
     const orderData = {
       items: orderItems,
-      amount,
+      amount
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/order/placeOrder', orderData, {
-        headers: { token },
-      });
-
+      // Send order details to the backend
+      const response = await axios.post(url + '/api/order/placeOrder', orderData, { headers: { token } })
       if (response.data.success) {
-        const { redirect_url } = response.data;
-        window.location.replace(redirect_url);
+        setCartItems({})
+        navigate('/')
+        toast.success("Order Placed Successfully.")
       } else {
-        toast.error('Error placing order');
+        toast.error("Order Failed.Please try again.")
       }
-    } catch (error) {
-      console.error('Error placing order:', error);
-      toast.error('Error placing order');
     }
-  };
+    catch (err) {
+      toast.error("Order Failed.Please try again.")
+    }
+  }
+
 
   return (
     <form onSubmit={placeOrder} className='place-order'>
@@ -233,5 +229,6 @@ const PlaceOrder = () => {
     </form>
   );
 };
+
 
 export default PlaceOrder;

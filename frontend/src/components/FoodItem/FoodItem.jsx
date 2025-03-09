@@ -3,7 +3,7 @@ import './FoodItem.css';
 import { assets } from '../../assets/assets';
 import { StoreContext } from '../../context/storeContext';
 
-const FoodItem = ({ id, name, price, description, image }) => {
+const FoodItem = ({ id, name, price, description, image,availability }) => {
   const { cartItems, addToCart, removeFromCart, url } = useContext(StoreContext);
 
   return (
@@ -11,8 +11,15 @@ const FoodItem = ({ id, name, price, description, image }) => {
       <div className="food-item-img-container">
         <img className="food-item-image" src={url + '/images/' + image} alt={name} />
 
+        {/* Out of Stock Overlay */}
+        {availability !== "available" && (
+          <div className="out-of-stock-overlay">
+            <span>Sold Out</span>
+          </div>
+        )}
+
         {/* Initial Add to Cart Button */}
-        {!cartItems[id] ? (
+       { availability==="available" && (!cartItems[id]  ? (
           <button className="add-btn initial" onClick={() => addToCart(id)}>
             Add to Cart
           </button>
@@ -26,7 +33,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
               +
             </button>
           </div>
-        )}
+        ))}
       </div>
 
       <div className="food-item-info">

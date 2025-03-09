@@ -3,10 +3,23 @@ import './Cart.css'
 import { useContext } from 'react'
 import { StoreContext } from '../../context/storeContext'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const Cart = () => {
-    const { cartItems, menuItems, removeFromCart, getTotalCartAmount,url } = useContext(StoreContext)
+    const { cartItems, menuItems, removeFromCart, getTotalCartAmount,url,token} = useContext(StoreContext)
     const navigate=useNavigate()
+    const handleCheckout=()=>{
+      if(Object.keys(cartItems).length>0){
+      if(token){
+      navigate('/placeOrder')
+      }
+      else{
+        navigate('/login')
+      }}else{
+        toast.error("Your Cart is Empty")
+      }
+
+    }
   return (
     <div className='cart'>
     <div className="cart-items">
@@ -30,7 +43,7 @@ const Cart = () => {
                 <p>Rs.{item.price}</p>
                 <p>{cartItems[item._id]}</p>
                 <p>Rs.{item.price * cartItems[item._id]}</p>
-                <p onClick={()=>removeFromCart(item._id)} className='cross'>x</p>
+                <strong><p onClick={()=>removeFromCart(item._id)} className='cross'>x</p></strong>
               </div>
               <hr />
             </div>
@@ -57,7 +70,7 @@ const Cart = () => {
                 <b>Rs.{getTotalCartAmount()===0?0:getTotalCartAmount()+10}</b>
             </div>
           </div>
-          <button onClick={()=>navigate('/placeOrder')}>PROCEED TO CHECKOUT</button>
+          <button onClick={handleCheckout}>PROCEED TO CHECKOUT</button>
         </div>
       </div>
       

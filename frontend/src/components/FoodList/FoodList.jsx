@@ -54,7 +54,8 @@ const FoodList = ({ category }) => {
             name={item.name} 
             price={item.price ?? 0}  // Default to 0 if price is undefined
             description={item.description ?? 'No description available'} // Default description
-            image={item.image ?? 'default-image.png'} />;
+            image={item.image ?? 'default-image.png'}
+            availability={item.availability?"available":"unavailable"} />;
           }
           return null;
         })}

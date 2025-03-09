@@ -1,157 +1,193 @@
-
-.navbar.img-position-change {
-    position: relative;
-  }
-  
-  img.img-style-change {
-    display: block;
-    width: 150px;
-    height: 100px;
-  }
-
-  .navbar{
+/* Navbar General Styles */
+.navbar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;   
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height:100px;
 }
 
-.navbar-menu{
+/* Logo */
+.logo {
+    width: 120px;
+    height: auto;
+}
+
+/* Navbar Menu */
+.navbar-menu {
     display: flex;
     list-style: none;
-    gap: 20px;
+    gap: 15px;
     color: #49557e;
-    font-size: 18px;
+    font-size: 16px;
 }
 
-.navbar-right{
+/* Active Link */
+.navbar-menu a.active {
+    color: #ff6f61;
+    font-weight: bold;
+}
+
+/* Right Section */
+.navbar-right {
     display: flex;
     align-items: center;
-    gap: 40px;
+    gap: 15px;
 }
 
-.navbar button{
-    background: transparent;
-    font-size: 15px;
-    color: #49557e;
-    border: 1px solid tomato;
-    padding: 10px 30px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.navbar button:hover{
-    background-color: #fff4f2;
-}
-
-.navbar .active{
-    padding-bottom: 2px;
-    border-bottom: 2px solid #49557e;
-}
-
-.navbar li{
-    cursor: pointer;
-}
-
-.navbar-search-icon{
+/* Cart Icon with Notification Dot */
+.navbar-search-icon {
     position: relative;
 }
 
-.navbar-search-icon .dot{
+.navbar-search-icon .dot {
     position: absolute;
-    min-width: 10px;
-    min-height: 10px;
+    min-width: 8px;
+    min-height: 8px;
     background-color: tomato;
-    border-radius: 5px;
-    top: -8px;
-    right: -8px;
+    border-radius: 50%;
+    top: -3px;
+    right: -3px;
 }
 
-.navbar-profile{
+/* Profile Dropdown */
+.navbar-profile {
     position: relative;
 }
-.nav-profile-dropdown{
+
+.nav-profile-dropdown {
     position: absolute;
-    display: none;
     right: 0;
-    z-index: 1;
+    top: 100%;
+    background-color: #fff;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    min-width: 160px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.navbar-profile:hover .nav-profile-dropdown{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: #fff2ef;
-    padding: 12px 25px;
-    border-radius: 4px;
-    border: 1px solid tomato;
-    outline: 2px solid white;
-    list-style: none;
+.navbar-profile:hover .nav-profile-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
-
-.nav-profile-dropdown li{
+.nav-profile-dropdown li {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap:10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
     cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.nav-profile-dropdown li:not(:last-child) {
+    border-bottom: 1px solid #eee; /* Thin separator */
+}
+
+
+.nav-profile-dropdown li:hover {
+    background-color: #ff6f61;
+    color: white;
 }
 
 .nav-profile-dropdown img {
     width: 20px;
+    height: 20px;
+    object-fit: cover;
 }
 
-.nav-profile-dropdown li:hover{
-    color: tomato;
-}
-
-.navbar-menu a.active {
-    color: #ff6f61; /* Change to the color you want for the active link */
-    font-weight: bold;
-  }
-  
-
-@media (max-width:1050px) {
-    .navbar .logo{
-        width: 140px;
-    }
-    .navbar-menu{
-        gap: 20px;
-        font-size: 17px;
-    }
-    .navbar-right{
-        gap: 30px;
-    }
-    .navbar-right img{
-        width: 22px;
-    }
-    .navbar-right button{
-        padding: 8px 25px;
+/* Mobile Optimization */
+@media (max-width: 600px) {
+    .nav-profile-dropdown {
+        right: -20px; /* Adjust for smaller screens */
+        min-width: 140px;
     }
 }
 
-@media (max-width:900px) {
-    .navbar .logo{
-        width: 120px;
-    }
-    .navbar-menu{
-        gap: 15px;
-        font-size: 16px;
-    }
-    .navbar-right{
-        gap: 20px;
-    }
-    .navbar-right img{
-        width: 20px;
-    }
-    .navbar-right button{
-        padding: 7px 20px;
-        font-size: 15px;
-    }
-}
 
-@media (max-width:750px) {
-    .navbar-menu{
+/* Responsive Navbar */
+@media (max-width: 750px) {
+    .navbar-menu {
         display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 10px 0;
+    }
+
+    .navbar-menu.open {
+        display: flex;
+    }
+
+    .navbar-menu a {
+        padding: 8px;
+        text-align: center;
+        display: block;
+        width: 100%;
+    }
+
+    /* Hamburger Menu */
+    .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        cursor: pointer;
+    }
+
+    /* Smaller Hamburger Bars */
+    .bar {
+        width: 22px; /* Reduced width */
+        height: 2px; /* Reduced height */
+        background-color: #49557e;
+        transition: 0.3s;
+    }
+
+    /* Animation for hamburger when open */
+    .hamburger .bar.open:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+    }
+    .hamburger .bar.open:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger .bar.open:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -4px);
+    }
+}
+
+/* Extra Small Screens (300px) */
+@media (max-width: 350px) {
+    .logo {
+        width: 100px; /* Reduce logo size */
+    }
+    .navbar {
+        padding: 10px;
+    }
+    .navbar-right {
+        gap: 10px;
+    }
+    .navbar-search-icon img {
+        width: 18px; /* Reduce icon size */
+    }
+    .navbar button {
+        padding: 6px 12px;
+        font-size: 12px;
     }
 }

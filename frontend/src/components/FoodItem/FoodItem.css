@@ -31,13 +31,28 @@
   .food-item-img-container:hover .food-item-image {
     opacity: 0.8;
   }
-  
+  /* Out of Stock Overlay */
+.out-of-stock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Dark background */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 5; /* Ensures the overlay appears above the image */
+}
+
   /* Initial Add to Cart Button */
   .add-btn.initial {
     position: absolute;
     bottom: 15px; /* Positioned at the bottom of the container */
     left: 12%;
-    /* transform: translateX(-50%); */
     background-color: tomato; /* Green for add */
     color: white;
     border: none;

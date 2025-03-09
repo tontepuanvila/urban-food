@@ -4,6 +4,19 @@ import mongoose from "mongoose";
 import multer from "multer";
 import path from "path";
 
+// Set up multer for image storage (you can change the storage destination and filename format)
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Specify the folder to save files
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        cb(null, Date.now() + ext); // Generate unique filename with extension
+    }
+});
+
+const upload = multer({ storage: storage });
+
 //add menu item
 
 const addMenu = async (req,res) => {
@@ -20,9 +33,8 @@ const addMenu = async (req,res) => {
     })
     try {
         await menu.save();
-        res.json({success:true,message:"Menu Item Added"})
+        res.json({success:true,message:"Menu Item added successfully."})
     } catch (error) {
-        console.log(error)
         res.json({success:false,message:error.message})
     }
 }
@@ -32,24 +44,11 @@ const listMenu= async (req,res) => {
         const menu = await menuModel.find({});
         res.json({success:true,data:menu})
     } catch (error) {
-        console.log(error);
         res.json({success:false,message:error.message})
     }
 }
 
 
-// Set up multer for image storage (you can change the storage destination and filename format)
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Specify the folder to save files
-    },
-    filename: function (req, file, cb) {
-        const ext = path.extname(file.originalname);
-        cb(null, Date.now() + ext); // Generate unique filename with extension
-    }
-});
-
-const upload = multer({ storage: storage });
 
 // Update menu function
 const updateMenu = async (req, res) => {
@@ -73,7 +72,7 @@ const updateMenu = async (req, res) => {
             const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
 
             if (updatedMenu) {
-                res.json({ success: true, message: 'Menu updated successfully' });
+                res.json({ success: true, message: 'Menu Item updated successfully' });
             } else {
                 res.json({ success: false, message: 'Menu not found' });
             }
@@ -88,13 +87,11 @@ const updateMenu = async (req, res) => {
 const removeMenu = async (req,res) => {
     try {
         const menu = await menuModel.findById(new mongoose.Types.ObjectId(req.params));
-        console.log(menu)
         fs.unlink(`uploads/${menu.image}`,()=>{})
 
         await menuModel.findByIdAndDelete(new mongoose.Types.ObjectId(req.params));
-        res.json({success:true,message:"Menu Item Removed"})
+        res.json({success:true,message:"Menu Item removed successfully"})
     } catch (error) {
-        console.log(error);
         res.json({success:false,message:error.message})
     }
 }

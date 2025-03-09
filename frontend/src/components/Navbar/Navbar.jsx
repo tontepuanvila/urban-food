@@ -1,74 +1,66 @@
-import React, { useContext } from 'react'
-import './Navbar.css'
-import { assets } from '../../assets/assets'
-import { useNavigate } from 'react-router-dom'
-import { StoreContext } from '../../context/storeContext'
-import { useAuth } from '../../context/AuthContext'
-import { NavLink,Link } from 'react-router-dom' // Import NavLink from react-router-dom
+import React, { useContext, useState } from 'react';
+import './Navbar.css';
+import { assets } from '../../assets/assets';
+import { useNavigate, NavLink, Link } from 'react-router-dom';
+import { StoreContext } from '../../context/storeContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
-  const { getTotalCartAmount, token, setToken } = useContext(StoreContext)
-  const navigate = useNavigate()
-  const { logoutUser } = useAuth()
+  const { getTotalCartAmount, token, setToken } = useContext(StoreContext);
+  const { logoutUser, user } = useAuth();
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
 
   const logout = () => {
-    logoutUser()
-    localStorage.removeItem("token")
-    setToken("")
-    navigate("/")
-  }
+    logoutUser();
+    localStorage.removeItem('token');
+    setToken('');
+    navigate('/');
+  };
 
   return (
-    <div className='navbar img-position-change'>
-      <Link to='/'><img src={assets.logo} alt="" className='logo img-style-change' /></Link>
-      <ul className='navbar-menu'>
-        <NavLink 
-          to='/' 
-          end // Use 'end' for exact matching with the home page
-          className={({ isActive }) => isActive ? 'active' : ''} // Dynamically set class based on route
-        >
-          Home
-        </NavLink>
-        <NavLink 
-          to='/menu' 
-          className={({ isActive }) => isActive ? 'active' : ''} 
-        >
-          Menu
-        </NavLink>
-        <NavLink 
-          to='/dashboard' 
-          className={({ isActive }) => isActive ? 'active' : ''} 
-        >
-          Dashboard
-        </NavLink>
-        
+    <nav className='navbar'>
+      <Link to='/'><img src={assets.logo} alt="Logo" className='logo' /></Link>
+
+      {/* Hamburger Menu Icon */}
+      <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <div className={isMenuOpen ? "bar open" : "bar"}></div>
+        <div className={isMenuOpen ? "bar open" : "bar"}></div>
+        <div className={isMenuOpen ? "bar open" : "bar"}></div>
+      </div>
+
+      {/* Navbar Menu */}
+      <ul className={`navbar-menu ${isMenuOpen ? "open" : ""}`}>
+        <NavLink to='/' end className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>
+        <NavLink to='/menu' className={({ isActive }) => isActive ? 'active' : ''}>Menu</NavLink>
+        {(user?.role === 'admin' || user?.role === 'manager') && 
+          <NavLink to='/dashboard' className={({ isActive }) => isActive ? 'active' : ''}>Dashboard</NavLink>}
       </ul>
+
+      {/* Right Section */}
       <div className="navbar-right">
         <div className="navbar-search-icon">
-          <Link to='/cart'>
-            <img src={assets.basket_icon} alt="" />
-          </Link>
-          <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
+          <Link to='/cart'><img src={assets.basket_icon} alt="Cart" /></Link>
+          {getTotalCartAmount() > 0 && <div className="dot"></div>}
         </div>
         {!token ? (
           <button onClick={() => navigate('/login')} className='signbutton'>Sign In</button>
         ) : (
           <div className='navbar-profile'>
-            <img src={assets.profile_icon} className='white-filter' alt="" />
+            <img src={assets.profile_icon} className='white-filter' alt="Profile" />
             <ul className="nav-profile-dropdown">
               <li onClick={() => navigate('/myOrders')}>
-                <img src={assets.bag_icon} alt="" /><p>Orders</p>
+                <img src={assets.bag_icon} alt="Orders" /><p>Orders</p>
               </li>
-              <hr />
               <li onClick={logout}>
-                <img src={assets.logout_icon} alt="" /><p>Logout</p>
+                <img src={assets.logout_icon} alt="Logout" /><p>Logout</p>
               </li>
             </ul>
           </div>
         )}
       </div>
-    </div>
-  )
-}
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;

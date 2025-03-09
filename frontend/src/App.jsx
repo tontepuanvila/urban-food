@@ -42,7 +42,9 @@ const App = () => {
           <Route path='/myOrders' element={<MyOrders />} />
           <Route path='/dashboard/*' element={<ProtectedRoute roles={['manager', 'admin']} />}>
             <Route path='' element={<Dashboard />}>
-              <Route path='addMenu' element={<AddMenu url={url} fetchMenuItems={fetchMenuItems} />} />
+              <Route path='addMenu' element={<ProtectedRoute roles={['admin']} />}>
+                <Route path='' element={<AddMenu url={url} fetchMenuItems={fetchMenuItems} />} />
+              </Route>
               <Route path='updateMenu' element={<ModifyMenu url={url} fetchMenuItems={fetchMenuItems} />} />
               <Route path='editItem/:id' element={<MenuItem url={url} fetchMenuItems={fetchMenuItems} />} />
               <Route path='orders' element={<Orders url={url} />} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -27,8 +27,10 @@ const AddMenu = ({ url, fetchMenuItems }) => {
         description: '',
         price: '',
         category: 'Salad',
-        availability: 'In Stock'
+        availability: 'available'
     });
+    const fileInputRef = useRef(null);
+
 
 
     /**
@@ -47,6 +49,17 @@ const AddMenu = ({ url, fetchMenuItems }) => {
     const onImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            if (!validTypes.includes(file.type)) {
+                toast.error('Invalid file type. Only JPG, PNG, and JPEG are allowed.');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) { // Limit file size to 5MB
+                toast.error('File size exceeds 5MB.');
+                return;
+            }
+
             setImage(file);
             setData((prevData) => ({ ...prevData, image: file }));
 
@@ -95,7 +108,7 @@ const AddMenu = ({ url, fetchMenuItems }) => {
         }
 
         if (!image) {
-            toast.error('Please select an image');
+            toast.error('Please upload an image');
             return false;
         }
 
@@ -120,7 +133,7 @@ const AddMenu = ({ url, fetchMenuItems }) => {
         formData.append('description', data.description);
         formData.append('price', Number(data.price));
         formData.append('category', data.category);
-        formData.append('availability', data.availability === 'In Stock');
+        formData.append('availability', data.availability === 'available');
         formData.append('image', image);
 
         try {
@@ -138,16 +151,17 @@ const AddMenu = ({ url, fetchMenuItems }) => {
                     description: '',
                     price: '',
                     category: 'Salad',
-                    availability: 'In Stock'
+                    availability: 'available'
                 });
                 setImage(null);
+                fileInputRef.current.value = '';  
                 setPreview('');
                 toast.success(response.data.message);
 
                 // Refresh menu items list
                 fetchMenuItems();
             } else {
-                toast.error(response.data.message);
+                toast.error("Something went wrong. Please try again.");
             }
         } catch (error) {
             toast.error('Something went wrong. Please try again.');
@@ -217,8 +231,8 @@ const AddMenu = ({ url, fetchMenuItems }) => {
                 <div className="add-availability flex-col">
                     <p>Availability</p>
                     <select className="selectt" onChange={onChangeHandler} name="availability" value={data.availability}>
-                        <option value="In Stock">In Stock</option>
-                        <option value="Out of Stock">Out of Stock</option>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
                     </select>
                 </div>
 
@@ -227,7 +241,7 @@ const AddMenu = ({ url, fetchMenuItems }) => {
                     <label htmlFor="image">
                         Upload Image
                     </label>
-                    <input type="file" id="image" onChange={onImageChange} required />
+                    <input type="file" id="image" ref={fileInputRef}  onChange={onImageChange} required />
                     {preview && <img src={preview} alt="Preview" className="image-preview" />}
                 </div>
 

@@ -23,7 +23,7 @@ const registerUser = async (req, res) => {
 
 
         if (password.length<8){
-            return res.json({success:false,message:"Please enter a strong password."})
+            return res.json({success:false,message:"Please enter a strong password(minimum of 8 Characters)."})
         }
 
         // hashing user password
@@ -37,10 +37,9 @@ const registerUser = async (req, res) => {
             role:role
         })
         const user = await newUser.save()
-        console.log(user);
         const token = createToken(user._id)
         const userRole=user.role
-        res.json({success:true,token,role:userRole});
+        res.json({success:true,token,role:userRole,message:"Signed Up Successfully"});
     } catch (error) {
         res.json({success:false,message:error.message})
     }
@@ -50,7 +49,6 @@ const loginUser = async (req,res) => {
     const {email,password} = req.body;
     try {
         const user = await userModel.findOne({email})
-        console.log(user);
         if (!user){
             return res.json({success:false,message:`User doesn't exist`})
         }
@@ -64,10 +62,9 @@ const loginUser = async (req,res) => {
         const token = createToken(user._id);
         const role=user.role
         
-        res.json({success:true,token,role})
+        res.json({success:true,token,role,message:"Logged In Successfully"})
     } catch (error) {
-        console.log(error);
-        res.json({success:false,message:"Error"})
+        res.json({success:false,message:error.message})
     }
 }
 

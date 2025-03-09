@@ -39,4 +39,6 @@
   .filters-container select:focus, .filters-container input:focus {
     border-color: #00aaff;
   }
-  
+  @media (max-width: 480px) {
+    .filters-container {flex-direction: column;}
+  }

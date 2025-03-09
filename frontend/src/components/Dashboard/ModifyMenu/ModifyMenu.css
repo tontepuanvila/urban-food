@@ -89,7 +89,7 @@
 }
 
 /* Price styling */
-.menu-item-price {
+.modify-item-price {
     color: tomato;
     font-size: 22px;
     font-weight: 500;
@@ -152,7 +152,7 @@
         font-size: 1.2rem;
     }
 
-    .menu-item-price {
+    .modify-item-price {
         font-size: 18px;
     }
 
@@ -177,7 +177,7 @@
         font-size: 1rem;
     }
 
-    .menu-item-price {
+    .modify-item-price {
         font-size: 16px;
     }
 

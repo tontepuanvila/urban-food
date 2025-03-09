@@ -20,7 +20,7 @@ const StoreContextProvider = (props) => {
             const response = await axios.get(url + "/api/menu/listMenu");
             setMenuItems(response.data.data);
         } catch (error) {
-            console.error("Error fetching menu items:", error);
+            toast.error("Unable to fetch the Menu")
         }
     };
 
@@ -51,7 +51,7 @@ const StoreContextProvider = (props) => {
             const cartData = response.data.data
             setCartItems(cartData);
         } catch (error) {
-            console.error("Error loading cart data:", error);
+            toast.error("Unable to fetch Cart Items.");
         }
     };
     
@@ -90,7 +90,7 @@ const StoreContextProvider = (props) => {
 
 
     const contextValue = {
-        menuItems, addToCart, removeFromCart, cartItems, getTotalCartAmount,url,token,setToken,fetchMenuItems
+        menuItems, addToCart, removeFromCart, cartItems, getTotalCartAmount,url,token,setToken,fetchMenuItems,setCartItems
     }
 
     return (

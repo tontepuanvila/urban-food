@@ -1,52 +1,87 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import './Login.css';
 import { assets } from '../../assets/assets';
 import { StoreContext } from '../../context/storeContext';
-import axios from 'axios'
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const [currState, setCurrState] = useState("Login");
-  const {url,setToken} = useContext(StoreContext)
-  const {login}=useAuth()
-  const navigate=useNavigate()
-  const [data,setData] = useState({
-    name:"",
-    email:"",
-    password:""
-  })
+  const { url, setToken } = useContext(StoreContext);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const [data, setData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const validateForm = () => {
+    let isValid = true;
+    let newErrors = { name: "", email: "", password: "" };
+
+    if (currState === "Sign Up" && data.name.trim() === "") {
+      newErrors.name = "Name is required";
+      isValid = false;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(data.email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    if (data.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    if(newErrors){
+    toast.error(newErrors)
+    }
+    return isValid;
+  };
+
   const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setData(data=>({...data,[name]:value}))
-  }
+    const { name, value } = event.target;
+    setData((prevData) => ({ ...prevData, [name]: value }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error on input change
+  };
 
   const onLogin = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
+
+    if (!validateForm()) return;
+
     let newUrl = url;
-    if (currState==="Login"){
-      newUrl += "/api/user/login"
-    }
-    else{
-      newUrl += "/api/user/register"
-    }
+    newUrl += currState === "Login" ? "/api/user/login" : "/api/user/register";
 
-    const response = await axios.post(newUrl,data);
+    try {
+      const response = await axios.post(newUrl, data);
 
-    if (response.data.success){
-      setToken(response.data.token);
-      localStorage.setItem("token",response.data.token)
-      localStorage.setItem("role",response.data.role)
-      login(response.data)
-      navigate("/")
+      if (response.data.success) {
+        setToken(response.data.token);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("role", response.data.role);
+        login(response.data);
+        navigate("/");
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
     }
-    else{
-      alert(response.data.message)
-    }
-
-  }
-
+  };
 
   return (
     <div className='login'>
@@ -55,16 +90,50 @@ const Login = () => {
           <h2>{currState}</h2>
           <img src={assets.cross_icon} alt="" />
         </div>
+
         <div className="login-inputs">
-          {currState === "Login" ? <></> : <input name='name' onChange={onChangeHandler} value={data.name} type="text" placeholder='Your name' required />}
-          <input name='email' onChange={onChangeHandler} value={data.email} type="email" placeholder='Your email' required />
-          <input name='password' onChange={onChangeHandler} value={data.password} type="password" placeholder='Password' required />
+          {currState === "Sign Up" && (
+            <>
+              <input
+                name='name'
+                onChange={onChangeHandler}
+                value={data.name}
+                type="text"
+                placeholder='Your name'
+                required
+              />
+              {errors.name && <p className="error">{errors.name}</p>}
+            </>
+          )}
+
+          <input
+            name='email'
+            onChange={onChangeHandler}
+            value={data.email}
+            type="email"
+            placeholder='Your email'
+            required
+          />
+          {errors.email && <p className="error">{errors.email}</p>}
+
+          <input
+            name='password'
+            onChange={onChangeHandler}
+            value={data.password}
+            type="password"
+            placeholder='Password'
+            required
+          />
+          {errors.password && <p className="error">{errors.password}</p>}
         </div>
+
         <button type='submit'>{currState === "Sign Up" ? "Create account" : "Login"}</button>
+
         <div className="login-condition">
           <input type="checkbox" required />
           <p className='continuee'>By continuing, I agree to the terms of use & privacy policy</p>
         </div>
+
         {currState === "Login"
           ? <p>Create a new account? <span onClick={() => setCurrState("Sign Up")}>Click here</span></p>
           : <p>Already have an account? <span onClick={() => setCurrState("Login")}>Login here</span></p>

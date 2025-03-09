@@ -31,7 +31,7 @@ const MenuItem = ({ url, fetchMenuItems }) => {
         description: itemData?.description || '',
         price: itemData?.price || '',
         category: itemData?.category || 'Salad',
-        availability: itemData?.availability || 'In Stock',
+        availability: itemData?.availability || 'available',
     });
 
     // Set preview image when itemData is available
@@ -98,7 +98,7 @@ const MenuItem = ({ url, fetchMenuItems }) => {
             return false;
         }
 
-        if (!image) {
+        if (!image && !preview) {
             toast.error('Please select an image');
             return false;
         }
@@ -119,10 +119,13 @@ const MenuItem = ({ url, fetchMenuItems }) => {
         formData.append('description', data.description);
         formData.append('price', Number(data.price));
         formData.append('category', data.category);
-        formData.append('availability', data.availability === 'In Stock');
+        formData.append('availability', data.availability === 'available');
         if (image) {
             formData.append('image', image);
-        }
+        }else if (imageName) {
+        formData.append('existingImage', imageName); // Send existing image name if no new file is chosen
+    }
+
 
         try {
             const response = await axios.put(`${url}/api/menu/updateMenu/${itemData._id}`, formData, {
@@ -135,7 +138,7 @@ const MenuItem = ({ url, fetchMenuItems }) => {
                 toast.success(response.data.message);
                 fetchMenuItems(); // Refresh menu items
             } else {
-                toast.error(response.data.message);
+                toast.error('Something went wrong. Please try again.');
             }
         } catch (error) {
             toast.error('Something went wrong. Please try again.');
@@ -178,14 +181,14 @@ const MenuItem = ({ url, fetchMenuItems }) => {
                 <div className="menu-item-availability flex-col">
                     <p>Availability</p>
                     <select className="selectt" onChange={onChangeHandler} name="availability" value={data.availability}>
-                        <option value="In Stock">In Stock</option>
-                        <option value="Out of Stock">Out of Stock</option>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
                     </select>
                 </div>
 
                 <div className="menu-item-img-upload flex-col">
                     <label htmlFor="image">Upload Image</label>
-                    <input type="file" id="image" onChange={onImageChange} required />
+                    <input type="file" id="image" onChange={onImageChange}/>
                     {preview && <img src={preview} alt="Preview" className="image-preview" />}
                     {imageName && <p>Selected image: {imageName}</p>}
                 </div>

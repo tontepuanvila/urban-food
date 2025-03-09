@@ -1,111 +1,29 @@
 import express from 'express'
 import orderModel from "../models/orderModel.js";
-import paypal from 'paypal-rest-sdk';
+import userModel from '../models/userModel.js';
 
-const deliveryCharge = 10
-paypal.configure({
-    'mode': 'sandbox', 
-    'client_id': process.env.PAYPAL_CLIENT_ID,
-    'client_secret': process.env.PAYPAL_CLIENT_SECRET
-  });
+const placeOrder = async (req, res) => {
 
-const placeOrder = async (req,res) => {
+  try {
+      const { userId, items, amount } = req.body
+      const orderData = { userId, items, totalAmount:amount,status:"Pending", date: Date.now() }
+      const newOrder = new orderModel(orderData)
+      await newOrder.save()
+      await userModel.findByIdAndUpdate(userId, { cartData: {} })
+      res.json({ success: true, message: "Order Placed" })
 
-    const { userId, items, amount } = req.body;
-    const { origin } = req.headers;
-    const orderData = {
-        userId,
-        items: items.map(item => ({
-          menuItemId: item.menuItemId,
-          quantity: item.quantity
-        })),
-        totalAmount: items.reduce((total, item) => total + (item.price * item.quantity), 0) + deliveryCharge,
-        status: 'Pending',
-        createdAt: Date.now(),
-        payment: false
-      };
-      
-      const newOrder = new orderModel(orderData);
-      await newOrder.save();      
-      console.log(newOrder)
+  } catch (error) {
+      res.json({ success: false, message: error.message })
+  }
 
-    const create_payment_json = {
-      intent: 'sale',
-      payer: {
-        payment_method: 'paypal'
-      },
-      redirect_urls: {
-         "return_url": `${origin}/verify?success=true&orderId=${newOrder._id}`,
-            "cancel_url": `${origin}/verify?success=false&orderId=${newOrder._id}`
-      },
-      transactions: [{
-        item_list: {
-          items: items.map(item => ({
-            name: item.menuItemId,
-            sku: item.menuItemId,
-            price: item.price.toFixed(2),
-            currency: 'USD',
-            quantity: item.quantity
-          }))
-        },
-        amount: {
-          currency: 'USD',
-          total: amount.toFixed(2)
-        },
-        description: ''
-      }]
-    };
-
-    paypal.payment.create(create_payment_json, function (error, payment) {
-        if (error) {
-          throw error;
-        } else {
-          res.json({ success: true, redirect_url: payment.links.find(link => link.rel === 'approval_url').href });
-        }
-      });
-  
-}
-  
-  const verifyOrder=async (req, res) => {
-    const { userId, orderId, success, paymentId, PayerID, amount } = req.body;
-    try {
-      if (success === "true") {
-        const execute_payment_json = {
-          "payer_id": PayerID,
-          "transactions": [{
-            "amount": {
-              "currency": 'USD',
-              "total": (amount + deliveryCharge).toFixed(2)
-            }
-          }]
-        };
-  
-        paypal.payment.execute(paymentId, execute_payment_json, async function (error, payment) {
-          if (error) {
-            throw error;
-          } else {
-            await orderModel.findByIdAndUpdate(orderId, { payment: true });
-            await UserModel.findByIdAndUpdate(userId, { cartData: {} });
-            res.json({ success: true });
-          }
-        });
-      } else {
-        await orderModel.findByIdAndDelete(orderId);
-        res.json({ success: false });
-      }
-    } catch (error) {
-      res.json({ success: false, message: error.message });
-    }
 }
 
 
 const userOrders = async (req,res) => {
     
-    const { userId } = req.body;
-    console.log(userId)
-    
+    const { userId } = req.body;    
       try {
-        // await orderModel.deleteMany({payment: false });
+        await orderModel.deleteMany({payment: false });
         const orders = await orderModel.find({ userId }).populate('items.menuItemId', 'name');
         const ordersWithNames = orders.map(order => {
           const itemsWithNames = order.items.map(item => ({
@@ -128,7 +46,8 @@ const userOrders = async (req,res) => {
 // Listing orders for admin panel
 const listOrders = async (req, res) => {
   try {
-      const orders = await orderModel.find({})
+    await orderModel.deleteMany({payment: false });
+    const orders = await orderModel.find({})
           .populate({
               path: 'items.menuItemId',
               select: 'name' // Only fetch the 'name' field of the menu item
@@ -136,7 +55,6 @@ const listOrders = async (req, res) => {
 
       res.json({ success: true, data: orders });
   } catch (error) {
-      console.log(error);
       res.json({ success: false, message: error.message });
   }
 };
@@ -147,11 +65,10 @@ const listOrders = async (req, res) => {
 const updateStatus = async (req,res) => {
     try {
         await orderModel.findByIdAndUpdate(req.params.id,{status:req.body.status});
-        res.json({success:true,message:"Status Updated"})
+        res.json({success:true,message:"Status Updated Successfully."})
     } catch (error) {
-        console.log(error);
         res.json({success:false,message:error.message})
     }
 }
 
-export {placeOrder,verifyOrder,userOrders,listOrders,updateStatus}
+export {placeOrder,userOrders,listOrders,updateStatus}

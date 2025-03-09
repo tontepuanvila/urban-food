@@ -36,7 +36,7 @@ const ModifyMenu = ({ url, fetchMenuItems }) => {
         toast.success(response.data.message);
         fetchMenuItems(); // Refresh the menu list after successful deletion
       } else {
-        toast.error(response.data.message);
+        toast.error("Failed to delete item. Please try again.");
       }
     } catch (error) {
       toast.error("Failed to delete item. Please try again.");
@@ -67,7 +67,7 @@ const ModifyMenu = ({ url, fetchMenuItems }) => {
             <div className="menu-item-info">
               <p>{item.name}</p>
               <p className="menu-item-desc">{item.description}</p>
-              <p className="menu-item-price">Rs.{item.price}</p>
+              <p className="modify-item-price">Rs.{item.price}</p>
             </div>
 
             {/* Action Buttons */}
@@ -82,7 +82,7 @@ const ModifyMenu = ({ url, fetchMenuItems }) => {
               </NavLink>
 
               {/* Delete Button - Deletes the Menu Item */}
-             {user.role==='admin' && <button onClick={() => handleDelete(item._id)} className="delete-button">
+             {user?.role==='admin' && <button onClick={() => handleDelete(item._id)} className="delete-button">
                 Delete
               </button>}
             </div>
