@@ -8,9 +8,9 @@ import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
 const Login = () => {
-  const [currState, setCurrState] = useState("Login");
-  const { url, setToken } = useContext(StoreContext);
-  const { login } = useAuth();
+  const [currState, setCurrState] = useState("Login"); // Tracks current state: Login or Sign Up
+  const { url, setToken } = useContext(StoreContext); // Fetch backend URL and set token
+  const { login } = useAuth(); // Access login functionality from context
   const navigate = useNavigate();
 
   const [data, setData] = useState({
@@ -20,22 +20,18 @@ const Login = () => {
   });
 
   const validateForm = () => {
-
     if (currState === "Sign Up" && data.name.trim() === "") {
-     toast.error("Name is required");
+      toast.error("Name is required");
       return false;
     }
-
     if (!/\S+@\S+\.\S+/.test(data.email)) {
-    toast.error("Invalid email format");
+      toast.error("Invalid email format");
       return false;
     }
-
     if (data.password.length < 6) {
       toast.error("Password must be at least 6 characters");
       return false;
     }
-
     return true;
   };
 
@@ -46,7 +42,6 @@ const Login = () => {
 
   const onLogin = async (event) => {
     event.preventDefault();
-
     if (!validateForm()) return;
 
     let newUrl = url;
@@ -91,7 +86,6 @@ const Login = () => {
               />
             </>
           )}
-
           <input
             name='email'
             onChange={onChangeHandler}

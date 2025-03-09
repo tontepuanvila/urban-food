@@ -4,8 +4,10 @@ import { StoreContext } from '../../context/storeContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
 const PlaceOrder = () => {
-  const { getTotalCartAmount, menuItems, cartItems, token, url ,setCartItems} = useContext(StoreContext);
+  // Destructuring context data for cart and user information
+  const { getTotalCartAmount, menuItems, cartItems, token, url, setCartItems } = useContext(StoreContext);
   const [data, setData] = useState({
     firstName: '',
     lastName: '',
@@ -21,6 +23,7 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Redirects if the user is not logged in or cart is empty
     if (!token) {
       navigate('/cart');
     } else if (getTotalCartAmount() === 0) {
@@ -28,53 +31,23 @@ const PlaceOrder = () => {
     }
   }, [token]);
 
+  // Handles form input changes
   const onChangeHandler = (event) => {
     const name = event.target.name;
     const value = event.target.value;
     setData((data) => ({ ...data, [name]: value }));
   };
 
+  // Validates form inputs before placing the order
   const validateForm = () => {
-
-    if (!data.firstName) {
-      toast.error('First Name is required');
-      return false;
-    }
-    if (!data.lastName) {
-      toast.error('Last Name is required');
-      return false;
-    }
-    if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
-      toast.error('Please enter a valid email address');
-      return false
-    }
-    if (!data.street) {
-      toast.error('Street is required');
-      return false
-    }
-    if (!data.city) {
-      toast.error('City is required');
-      return false;
-    }
-    if (!data.state) {
-      toast.error('State is required');
-      return false;
-    }
-    if (!data.zipcode) {
-      toast.error('Zip code is required');
-      return false;
-    }
-    if (!data.country) {
-      toast.error('Country is required');
-      return false;
-    }
-    if (!data.phone || !/^\d{10}$/.test(data.phone)) {
-      toast.error('Please enter a valid phone number');
+    if (!data.firstName || !data.lastName || !data.email || !data.street || !data.city || !data.state || !data.zipcode || !data.country || !data.phone) {
+      toast.error("Please fill all required fields");
       return false;
     }
     return true;
   };
 
+  // Handles the order placement process
   const placeOrder = async (event) => {
     event.preventDefault();
 
@@ -84,7 +57,7 @@ const PlaceOrder = () => {
 
     let orderItems = [];
 
-    // Get the order items from the cart
+    // Prepare order items by checking cart quantities
     menuItems.forEach((item) => {
       if (cartItems?.[item._id] > 0) {
         orderItems.push({
@@ -96,27 +69,27 @@ const PlaceOrder = () => {
 
     const amount = getTotalCartAmount();
 
+    // Prepare order data for backend
     const orderData = {
       items: orderItems,
       amount
     };
 
     try {
-      // Send order details to the backend
+      // Sending order details to the backend API
       const response = await axios.post(url + '/api/order/placeOrder', orderData, { headers: { token } })
       if (response.data.success) {
-        setCartItems({})
-        navigate('/')
+        setCartItems({}) // Clears the cart after successful order
+        navigate('/') // Redirects user to homepage
         toast.success("Order Placed Successfully.")
       } else {
-        toast.error("Order Failed.Please try again.")
+        toast.error("Order Failed. Please try again.")
       }
     }
     catch (err) {
-      toast.error("Order Failed.Please try again.")
+      toast.error("Order Failed. Please try again.")
     }
   }
-
 
   return (
     <form onSubmit={placeOrder} className='place-order'>
@@ -229,6 +202,5 @@ const PlaceOrder = () => {
     </form>
   );
 };
-
 
 export default PlaceOrder;

@@ -20,12 +20,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
-
   const { url, fetchMenuItems } = useContext(StoreContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate('/');
+    navigate('/'); // Redirect to the home page on initial load
   }, []);
 
   return (
@@ -34,11 +33,14 @@ const App = () => {
         <ToastContainer />
         <Navbar />
         <Routes>
+          {/* Routes for main pages */}
           <Route path='/' element={<Home />} />
           <Route path='/menu' element={<Menu />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/placeOrder' element={<PlaceOrder />} />
           <Route path='/myOrders' element={<MyOrders />} />
+          
+          {/* Protected routes for admin and manager */}
           <Route path='/dashboard/*' element={<ProtectedRoute roles={['manager', 'admin']} />}>
             <Route path='' element={<Dashboard />}>
               <Route path='addMenu' element={<ProtectedRoute roles={['admin']} />}>
@@ -49,6 +51,8 @@ const App = () => {
               <Route path='orders' element={<Orders url={url} />} />
             </Route>
           </Route>
+
+          {/* Login and Unauthorized pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Routes>

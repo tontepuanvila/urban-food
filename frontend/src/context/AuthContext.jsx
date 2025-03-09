@@ -1,11 +1,16 @@
-import React, { createContext, useContext, useState,useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
+// Creating the AuthContext
 const AuthContext = createContext();
 
+// AuthProvider to manage the authentication state
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  // Login function to set the user
   const login = (userData) => setUser(userData);
+
+  // Logout function to clear the user
   const logoutUser = () => setUser(null);
 
   return (
@@ -15,4 +20,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// Custom hook to use the AuthContext
 export const useAuth = () => useContext(AuthContext);

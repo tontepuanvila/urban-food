@@ -5,17 +5,17 @@ import { useAuth } from '../context/AuthContext';
 const ProtectedRoute = ({ roles }) => {
   const { user } = useAuth();
 
+  // Check if user is logged in
   if (!user) {
-    // Not logged in
     return <Navigate to="/login" />;
   }
 
+  // Check if user's role is authorized
   if (roles && !roles.includes(user.role)) {
-    // Role not authorized
     return <Navigate to="/unauthorized" />;
   }
 
-  // Authorized
+  // Render the protected content
   return <Outlet />;
 };
 
