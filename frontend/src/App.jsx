@@ -15,7 +15,6 @@ import Orders from './components/Dashboard/Orders/Orders';
 import Menu from './pages/Menu/Menu';
 import MyOrders from './pages/MyOrders/MyOrders';
 import UnauthorizedPage from './pages/Unauthorized/UnauthorizedPage';
-import VerifyOrder from './pages/verifyOrder/verifyOrder';
 import { StoreContext } from './context/storeContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -51,7 +50,6 @@ const App = () => {
             </Route>
           </Route>
           <Route path="/login" element={<Login />} />
-          <Route path='/verify' element={<VerifyOrder />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Routes>
       </div>
