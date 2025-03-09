@@ -19,7 +19,7 @@ const FoodItem = ({ id, name, price, description, image,availability }) => {
         )}
 
         {/* Initial Add to Cart Button */}
-       { availability==="available" && (!cartItems[id]  ? (
+       { availability==="available" && (!cartItems?.[id]  ? (
           <button className="add-btn initial" onClick={() => addToCart(id)}>
             Add to Cart
           </button>

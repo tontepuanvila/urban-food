@@ -2,6 +2,7 @@ import { createContext,useEffect } from "react"
 import { useState } from "react"
 import axios from "axios"
 import { useAuth } from "./AuthContext"
+import { toast } from "react-toastify"
 
 export const StoreContext = createContext(null)
 
@@ -11,7 +12,7 @@ const StoreContextProvider = (props) => {
     const [menuItems,setMenuItems] = useState([])
     const {login}=useAuth()
 
-    const url="http://localhost:5000"
+    const url=import.meta.env.VITE_BACKEND_URL
 
    
 
@@ -26,7 +27,7 @@ const StoreContextProvider = (props) => {
 
 
     const addToCart = async (itemId) => {
-        if (!cartItems[itemId]) {
+        if (!cartItems?.[itemId]) {
             setCartItems((prev) => ({ ...prev, [itemId]: 1 }))
         }
         else {
@@ -61,7 +62,7 @@ const StoreContextProvider = (props) => {
         
         // Iterate over the cart items
         for (const item in cartItems) {
-            if (cartItems[item] > 0) {
+            if (cartItems?.[item] > 0) {
                 // Find the corresponding item in the menuItems
                 let itemInfo = menuItems.find((product) => product._id.toString() === item.toString());
                 

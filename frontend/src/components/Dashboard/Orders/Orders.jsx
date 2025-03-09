@@ -50,9 +50,9 @@ const Orders = ({ url }) => {
               <div className="order-items">
                 <p><strong>Items:</strong></p>
                 <ul>
-                  {order.items.map((item) => (
-                    <li key={`${order._id}-${item.menuItemId._id}`}  className="item-details">
-                      <div className="item-field"><strong>Item Name:</strong> {item.menuItemId.name}</div> {/* Replace with actual item name */}
+                  {order.items?.map((item) => (
+                    <li key={`${order?._id}-${item.menuItemId?._id}`}  className="item-details">
+                      <div className="item-field"><strong>Item Name:</strong> {item.menuItemId ? item.menuItemId.name:"-"}</div> {/* Replace with actual item name */}
                       <div className="item-field"><strong>Quantity:</strong> {item.quantity}</div>
                     </li>
                   ))}

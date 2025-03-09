@@ -86,7 +86,7 @@ const PlaceOrder = () => {
 
     // Get the order items from the cart
     menuItems.forEach((item) => {
-      if (cartItems[item._id] > 0) {
+      if (cartItems?.[item._id] > 0) {
         orderItems.push({
           menuItemId: item._id,
           quantity: cartItems[item._id],
