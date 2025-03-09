@@ -19,42 +19,29 @@ const Login = () => {
     password: ""
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    password: ""
-  });
-
   const validateForm = () => {
-    let isValid = true;
-    let newErrors = { name: "", email: "", password: "" };
 
     if (currState === "Sign Up" && data.name.trim() === "") {
-      newErrors.name = "Name is required";
-      isValid = false;
+     toast.error("Name is required");
+      return false;
     }
 
     if (!/\S+@\S+\.\S+/.test(data.email)) {
-      newErrors.email = "Invalid email format";
-      isValid = false;
+    toast.error("Invalid email format");
+      return false;
     }
 
     if (data.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-      isValid = false;
+      toast.error("Password must be at least 6 characters");
+      return false;
     }
 
-    setErrors(newErrors);
-    if(newErrors){
-    toast.error(newErrors)
-    }
-    return isValid;
+    return true;
   };
 
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setData((prevData) => ({ ...prevData, [name]: value }));
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error on input change
   };
 
   const onLogin = async (event) => {
@@ -102,7 +89,6 @@ const Login = () => {
                 placeholder='Your name'
                 required
               />
-              {errors.name && <p className="error">{errors.name}</p>}
             </>
           )}
 
@@ -114,8 +100,6 @@ const Login = () => {
             placeholder='Your email'
             required
           />
-          {errors.email && <p className="error">{errors.email}</p>}
-
           <input
             name='password'
             onChange={onChangeHandler}
@@ -124,7 +108,6 @@ const Login = () => {
             placeholder='Password'
             required
           />
-          {errors.password && <p className="error">{errors.password}</p>}
         </div>
 
         <button type='submit'>{currState === "Sign Up" ? "Create account" : "Login"}</button>

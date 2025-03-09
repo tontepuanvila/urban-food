@@ -110,6 +110,22 @@
     object-fit: cover;
 }
 
+.signbutton {
+    background: transparent;
+    font-size: 15px;
+    color: #49557e;
+    border: 1px solid tomato;
+    padding: 10px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.signbutton:hover {
+    background-color: #fff4f2;
+}
+
+
 /* Mobile Optimization */
 @media (max-width: 600px) {
     .nav-profile-dropdown {

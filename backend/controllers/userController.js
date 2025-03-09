@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
     const {name,password,email,role} = req.body;
     try {
         //checking if user already exists
-        const exists = await userModel.findOne({email,role});
+        const exists = await userModel.findOne({email});
         if (exists){
             return res.json({success:false,message:"User already exists."})
         }
@@ -48,7 +48,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req,res) => {
     const {email,password} = req.body;
     try {
-        const user = await userModel.findOne({email})
+        const user = await userModel.findOne({email,role})
         if (!user){
             return res.json({success:false,message:`User doesn't exist`})
         }
