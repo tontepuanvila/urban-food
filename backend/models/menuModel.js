@@ -2,6 +2,7 @@
  * Mongoose schema for the Menu model.
  * Defines the structure and validation rules for menu items.
  */
+import mongoose from "mongoose";
 const menuSchema = new mongoose.Schema({
     name: { type: String, required: true },        // Name of the menu item
     category: { type: String },                    // Category of the menu item (e.g., appetizer)
