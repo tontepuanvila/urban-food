@@ -49,7 +49,7 @@ const Orders = ({ url }) => {
           <div className="order-item" key={order._id}>
             <div className="order-details">
               <p><strong>Order ID:</strong> {order._id}</p>
-              <p><strong>Total Amount:</strong> ${order.totalAmount}</p>
+              <p><strong>Total Amount:</strong> Rs.{order.totalAmount}</p>
               <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
               <div className="order-items">
                 <p><strong>Items:</strong></p>
