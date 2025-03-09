@@ -1,21 +1,9 @@
 import menuModel from "../models/menuModel.js";
 import fs from 'fs';
 import mongoose from "mongoose";
-import multer from "multer";
-import path from "path";
+import upload from "../config/cloudinary.js";
 
-// Set up multer for image storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        const ext = path.extname(file.originalname);
-        cb(null, Date.now() + ext);
-    }
-});
 
-const upload = multer({ storage: storage });
 
 /**
  * Add a new menu item.
@@ -24,7 +12,7 @@ const upload = multer({ storage: storage });
  * @returns {Object} - Success or failure message.
  */
 const addMenu = async (req, res) => {
-    let image_filename = `${req.file.filename}`;
+    let image_filename = req.file.path;
 
     const menu = new menuModel({
         name: req.body.name,
@@ -66,31 +54,43 @@ const listMenu = async (req, res) => {
 const updateMenu = async (req, res) => {
     const { id } = req.params;
 
-    // Handle file upload
-    upload.single('image')(req, res, async (err) => {
-        if (err) {
-            return res.status(400).json({ success: false, message: 'File upload failed' });
+    try {
+        const existingMenu = await menuModel.findById(id);
+        if (!existingMenu) {
+            return res.status(404).json({ success: false, message: "Menu not found" });
         }
 
         const updateFields = { ...req.body };
 
+        // Check if the new image is uploaded, or if existing image is provided
         if (req.file) {
-            updateFields.image = req.file.filename;
-        }
+            const result = await cloudinary.uploader.upload_stream({ resource_type: "image" }, async (error, result) => {
+                if (error) {
+                    return res.status(500).json({ success: false, message: "Cloudinary upload failed" });
+                }
+                updateFields.image = result.secure_url; // Store Cloudinary URL
+                // Update the menu after uploading new image
+                const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
+                res.json({ success: true, message: "Menu Item updated successfully", menu: updatedMenu });
+            });
 
-        try {
+            result.end(req.file.buffer); // Send file buffer to Cloudinary
+        } else if (req.body.existingImage) {
+            // If no new image is uploaded, use the existing image name
+            updateFields.image = req.body.existingImage;
+            // Update menu without changing the image
             const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
-
-            if (updatedMenu) {
-                res.json({ success: true, message: 'Menu Item updated successfully' });
-            } else {
-                res.json({ success: false, message: 'Menu not found' });
-            }
-        } catch (error) {
-            res.json({ success: false, message: error.message });
+            res.json({ success: true, message: "Menu Item updated successfully", menu: updatedMenu });
+        } else {
+            // Handle case where no image (new or existing) is provided
+            const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
+            res.json({ success: true, message: "Menu Item updated successfully", menu: updatedMenu });
         }
-    });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 };
+
 
 /**
  * Remove a menu item.
@@ -101,7 +101,7 @@ const updateMenu = async (req, res) => {
 const removeMenu = async (req, res) => {
     try {
         const menu = await menuModel.findById(new mongoose.Types.ObjectId(req.params.id));
-        fs.unlink(`uploads/${menu.image}`, () => {});
+        fs.unlink(`uploads/${menu.image}`, () => { });
 
         await menuModel.findByIdAndDelete(new mongoose.Types.ObjectId(req.params.id));
         res.json({ success: true, message: "Menu Item removed successfully" });

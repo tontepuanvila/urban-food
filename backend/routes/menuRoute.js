@@ -5,8 +5,7 @@
  */
 import express from "express"
 import { addMenu, removeMenu, listMenu, updateMenu } from "../controllers/menuController.js"
-import multer from "multer"
-
+import upload from "../config/cloudinary.js";
 /**
  * Express router to mount menu related functions on.
  * @type {object}
@@ -14,24 +13,6 @@ import multer from "multer"
  */
 const menuRouter = express.Router();
 
-/**
- * Multer storage configuration for file uploads.
- * @type {object}
- * @const
- */
-const storage = multer.diskStorage({
-    destination: "uploads",
-    filename: (req, file, cb) => {
-        return cb(null, `${Date.now()}${file.originalname}`)
-    }
-})
-
-/**
- * Multer upload middleware configuration.
- * @type {object}
- * @const
- */
-const upload = multer({storage: storage})
 
 /**
  * Route serving menu item addition.

@@ -37,7 +37,7 @@ const MenuItem = ({ url, fetchMenuItems }) => {
     // Set preview image when itemData is available
     useEffect(() => {
         if (itemData?.image) {
-            setPreview(`${url}/images/${itemData?.image}`);
+            setPreview(`${itemData?.image}`);
             setImageName(itemData?.image);
         }
     }, [itemData, url]);
@@ -109,31 +109,34 @@ const MenuItem = ({ url, fetchMenuItems }) => {
     // Handle form submission
     const onSubmitHandler = async (event) => {
         event.preventDefault();
-
+    
         if (!validateForm()) {
             return;
         }
-
+    
         const formData = new FormData();
         formData.append('name', data.name);
         formData.append('description', data.description);
         formData.append('price', Number(data.price));
         formData.append('category', data.category);
         formData.append('availability', data.availability === 'available');
+        
+        // If a new image is selected, append it
         if (image) {
             formData.append('image', image);
-        }else if (imageName) {
-        formData.append('existingImage', imageName); // Send existing image name if no new file is chosen
-    }
-
-
+        } 
+        // If no new image is selected, send the existing image name
+        else if (imageName) {
+            formData.append('existingImage', imageName); 
+        }
+    
         try {
             const response = await axios.put(`${url}/api/menu/updateMenu/${itemData._id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
+    
             if (response.data.success) {
                 toast.success(response.data.message);
                 fetchMenuItems(); // Refresh menu items
@@ -144,6 +147,7 @@ const MenuItem = ({ url, fetchMenuItems }) => {
             toast.error('Something went wrong. Please try again.');
         }
     };
+    
 
     return (
         <div className="menu-item">

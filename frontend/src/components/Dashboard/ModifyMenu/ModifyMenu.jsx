@@ -61,7 +61,7 @@ const ModifyMenu = ({ url, fetchMenuItems }) => {
         {menuItems.map((item) => (
           <div key={item._id} className="menu-item">
             {/* Item Image */}
-            <img src={`${url}/images/${item.image}`} alt={item.name} />
+            <img src={item.image} alt={item.name} />
 
             {/* Item Details */}
             <div className="menu-item-info">

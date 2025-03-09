@@ -11,7 +11,7 @@ const FoodItem = ({ id, name, price, description, image, availability }) => {
     <div className="food-item">
       <div className="food-item-img-container">
         {/* Displaying food image */}
-        <img className="food-item-image" src={url + '/images/' + image} alt={name} />
+        <img className="food-item-image" src={image} alt={name} />
 
         {/* Overlay for out of stock items */}
         {availability !== "available" && (
