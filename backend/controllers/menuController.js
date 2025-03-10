@@ -1,8 +1,7 @@
 import menuModel from "../models/menuModel.js";
 import fs from 'fs';
 import mongoose from "mongoose";
-import upload from "../config/cloudinary.js";
-
+import cloudinary from "../config/cloudinary.js";
 
 
 /**
@@ -53,7 +52,6 @@ const listMenu = async (req, res) => {
  */
 const updateMenu = async (req, res) => {
     const { id } = req.params;
-
     try {
         const existingMenu = await menuModel.findById(id);
         if (!existingMenu) {
@@ -62,34 +60,40 @@ const updateMenu = async (req, res) => {
 
         const updateFields = { ...req.body };
 
-        // Check if the new image is uploaded, or if existing image is provided
+        // Check if a new image is uploaded
         if (req.file) {
-            const result = await cloudinary.uploader.upload_stream({ resource_type: "image" }, async (error, result) => {
-                if (error) {
-                    return res.status(500).json({ success: false, message: "Cloudinary upload failed" });
-                }
-                updateFields.image = result.secure_url; // Store Cloudinary URL
-                // Update the menu after uploading new image
-                const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
-                res.json({ success: true, message: "Menu Item updated successfully", menu: updatedMenu });
-            });
+            try {
+                const uploadResult = await new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        { resource_type: "image" },
+                        (error, result) => {
+                            if (error) {
+                                reject(error);
+                            } else {
+                                resolve(result);
+                            }
+                        }
+                    );
+                    stream.end(req.file.buffer); // Ensure buffer is sent
+                });
 
-            result.end(req.file.buffer); // Send file buffer to Cloudinary
+                updateFields.image = uploadResult.secure_url; // Store Cloudinary URL
+            } catch (uploadError) {
+                return res.status(500).json({ success: false, message: "Cloudinary upload failed" });
+            }
         } else if (req.body.existingImage) {
-            // If no new image is uploaded, use the existing image name
             updateFields.image = req.body.existingImage;
-            // Update menu without changing the image
-            const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
-            res.json({ success: true, message: "Menu Item updated successfully", menu: updatedMenu });
-        } else {
-            // Handle case where no image (new or existing) is provided
-            const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
-            res.json({ success: true, message: "Menu Item updated successfully", menu: updatedMenu });
         }
+
+        // Update the menu with new or existing image
+        const updatedMenu = await menuModel.findByIdAndUpdate(id, updateFields, { new: true });
+        res.json({ success: true, message: "Menu Item updated successfully", menu: updatedMenu });
+
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
 
 
 /**

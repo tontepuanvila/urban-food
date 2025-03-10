@@ -5,7 +5,7 @@
  */
 import express from "express"
 import { addMenu, removeMenu, listMenu, updateMenu } from "../controllers/menuController.js"
-import upload from "../config/cloudinary.js";
+import upload from "../middleware/upload.js";
 /**
  * Express router to mount menu related functions on.
  * @type {object}
@@ -39,7 +39,7 @@ menuRouter.get("/listMenu", listMenu);
  * @memberof module:routes/menuRoute
  * @inner
  */
-menuRouter.put("/updateMenu/:id", updateMenu);
+menuRouter.put("/updateMenu/:id",upload.single("image"), updateMenu);
 
 /**
  * Route serving menu item removal.

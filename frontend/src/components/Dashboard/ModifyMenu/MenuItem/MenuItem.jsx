@@ -108,8 +108,7 @@ const MenuItem = ({ url, fetchMenuItems }) => {
 
     // Handle form submission
     const onSubmitHandler = async (event) => {
-        event.preventDefault();
-    
+        event.preventDefault();    
         if (!validateForm()) {
             return;
         }
@@ -119,7 +118,7 @@ const MenuItem = ({ url, fetchMenuItems }) => {
         formData.append('description', data.description);
         formData.append('price', Number(data.price));
         formData.append('category', data.category);
-        formData.append('availability', data.availability === 'available');
+        formData.append('availability', data.availability === 'available'|| data.availability===true);
         
         // If a new image is selected, append it
         if (image) {
