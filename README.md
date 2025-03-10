@@ -29,6 +29,7 @@ Urban Food is a food ordering platform that allows users to browse menu items, a
 - **Database**: MongoDB
 - **Authentication**: JWT (JSON Web Tokens)
 - **Password Security**: bcrypt for password hashing
+- **Image Storage**: Cloudinary
 - **Deployment**: Vercel (frontend), Render (backend)
 
 ## Setup Instructions
@@ -49,7 +50,7 @@ Urban Food is a food ordering platform that allows users to browse menu items, a
 3. Configure environment variables
    Create a `.env.local` file in the frontend directory with:
    ```
-   VITE_BACKEND_URL=`http://localhost:5000`
+   VITE_BACKEND_URL=http://localhost:5000
    ```
 
 4. Start the development server
@@ -77,6 +78,9 @@ Urban Food is a food ordering platform that allows users to browse menu items, a
    PORT=5000
    MONGODB_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    ```
 
 4. Start the backend server
@@ -114,7 +118,7 @@ Urban Food is a food ordering platform that allows users to browse menu items, a
   email: String,
   password: String (hashed),
   role: String (enum: "user", "manager", "admin"),
-  cartData:Object
+  cartData: Object
 }
 ```
 
@@ -125,7 +129,7 @@ Urban Food is a food ordering platform that allows users to browse menu items, a
   name: String,
   description: String,
   price: Number,
-  image: String ,
+  image: String (Cloudinary URL),
   category: String,
   availability: Boolean,
 }
@@ -154,7 +158,7 @@ Urban Food is a food ordering platform that allows users to browse menu items, a
 - Role-based permissions:
   - **Admin**: Can add, update, delete menu items and update order status
   - **Manager**: Can update menu items and update order status
-  - **User,Admin,Manager**: Can browse menu, manage cart, place orders, and view their order history
+  - **User, Admin, Manager**: Can browse menu, manage cart, place orders, and view their order history
 
 ## Assumptions, Challenges, and Limitations
 
@@ -168,6 +172,7 @@ Urban Food is a food ordering platform that allows users to browse menu items, a
 - Implementing role-based access control securely
 - Managing cart state across sessions
 - Ensuring proper authentication and authorization
+- Cloudinary image storage
 
 ### Limitations
 - No payment gateway integration
@@ -197,7 +202,6 @@ urban-food/
 │   ├── controllers/          # Request handlers
 │   ├── middleware/           # Express middleware
 │   ├── models/               # Database models
-│   ├── routes/               # API route definitions
-│   └── uploads/              # Storing added menu images
+│   └── routes/               # API route definitions
 └── ...
 ```
