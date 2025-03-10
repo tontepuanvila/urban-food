@@ -10,24 +10,54 @@ import cloudinary from "../config/cloudinary.js";
  * @param {Object} res - The response object to send the result.
  * @returns {Object} - Success or failure message.
  */
-const addMenu = async (req, res) => {
-    let image_filename = req.file.path;
 
-    const menu = new menuModel({
-        name: req.body.name,
-        description: req.body.description,
-        price: req.body.price,
-        category: req.body.category,
-        image: image_filename,
-        availability: req.body.availability
-    });
+const addMenu = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: "Image file is required." });
+    }
+
     try {
-        await menu.save();
-        res.json({ success: true, message: "Menu Item added successfully." });
+        // Create a stream upload to Cloudinary from memory buffer
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: "urban-food", // Folder in Cloudinary
+                resource_type: "image", // Specify image upload type
+                public_id: `${Date.now()}-${req.file.originalname}`, // Set a unique public ID
+                format: "png", // Optionally, specify the format
+            },
+            async (error, result) => {
+                if (error) {
+                    return res.status(500).json({ success: false, message: "Cloudinary upload failed" });
+                }
+
+                // Create a new menu item with the Cloudinary image URL
+                const menu = new menuModel({
+                    name: req.body.name,
+                    description: req.body.description,
+                    price: req.body.price,
+                    category: req.body.category,
+                    image: result.secure_url, // Store the Cloudinary URL
+                    availability: req.body.availability
+                });
+
+                // Save the menu item to the database
+                try {
+                    await menu.save();
+                    res.json({ success: true, message: "Menu Item added successfully." });
+                } catch (error) {
+                    res.status(500).json({ success: false, message: error.message });
+                }
+            }
+        );
+
+        // Pipe the buffer from the memory storage to Cloudinary upload stream
+        uploadStream.end(req.file.buffer);
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
+
+
 
 /**
  * List all menu items.
